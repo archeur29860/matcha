@@ -148,7 +148,7 @@ vulnérabilités de sécurité qui ne sont pas tolérées :
 
 ## Data Base
 
-
+![alt](./Ressources_README/db_diagram.png)
 
 
 ## Reférence
