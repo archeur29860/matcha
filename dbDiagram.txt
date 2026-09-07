@@ -1,0 +1,68 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+enum gender {
+  "Male"
+  "Female"
+  "Other"
+}
+
+enum type_of_interaction {
+  "Liked"
+  "Viewed"
+  "Matched"
+}
+
+Table user {
+  id  uuid [pk]
+  email string [not null, note: 'not blank']
+  username string [not null, note: 'not blank']
+  last_name string [not null, note: 'not blank']
+  first_name string [not null, note: 'not blank']
+  password string [not null, note: 'public key']
+
+  last_connection timestamp
+  is_online bool
+  signaled integer
+}
+
+Table userProfile {
+  user_id uuid [not null]
+  age date
+  status gender [default: gender.Other]
+  gender_pref "gender[3]" [default: '{Male,Female}']
+  bio string
+  pictures "text[]"
+  popularity integer
+  localisation string [default: null]
+  tags "integer[]"
+}
+
+Table interaction {
+  id uuid [pk, note :'id de l\'interaction']
+  from_user_id uuid
+  to_user_id uuid
+  status type_of_interaction
+  created_at timestamp
+}
+
+Table matches {
+  id uuid [pk]
+  user_low_id uuid [not null]
+  user_high_id uuid [not null]
+  created_at timestamp [not null]
+}
+
+Table blocked {
+  user_id uuid
+  user_id_blocked "uuid[]"
+}
+
+Table tags {
+  index integer [unique]
+  label string [not null]
+}
+
+
+
+Ref: "user"."id" < "userProfile"."user_id"
