@@ -93,11 +93,11 @@ de la « note de popularité » et des tags communs.
 
 ## Recherche
 
-Recherche avancéen fonction :
-- Une tranche d’âge spécifique.
-- Une plage de « note de popularité ».
-- Une localisation.
-- Un ou plusieurs tags d’intérêt.
+Recherche avancé en fonction :
+- Une tranche **d’âge** spécifique.
+- Une plage de « note de **popularité** ».
+- Une **localisation**.
+- Un ou plusieurs **tags** d’intérêt.
 
 ## Consultation de profil
 
@@ -115,7 +115,7 @@ Lors d'une consultation:
 - **Signaler** un utilisateur comme « faux compte », «scam» ou «problématique».
 - **Bloquer un utilisateur**. Un utilisateur bloqué n’apparaîtra plus dans les résultats de recherche et ne générera plus de notifications. De plus, discuter avec lui ne sera plus possible.
 
-Les utilisateurs doivent clairement voir si le profil qu’ils consultent les a « likés » ou s’ils sont déjà « connectés ». Ils doivent également avoir la possibilité de « unliker » ou de se déconnecter de ce profil.
+Les utilisateurs doivent clairement voir si le profil qu’ils consultent les a **« likés »** ou s’ils sont déjà **« connectés »**. Ils doivent également avoir la possibilité de **« unliker »** ou de se déconnecter de ce profil.
 
 ## Chat
 Lorsque deux utilisateurs sont connectés, ils peuvent clavarder en **temps réel** (**délai max 10s**).
@@ -124,10 +124,10 @@ Lorsque deux utilisateurs sont connectés, ils peuvent clavarder en **temps rée
 
 ## Notifications
 Les utilisateurs doivent recevoir des notifications en temps réel(max 10s) sur n'importe quelle pages pour les événements suivants :
-- Lorsqu’ils reçoivent un « like ».
-- Lorsque leur profil a été consulté.
-- Lorsqu’ils reçoivent un message.
-- Lorsqu’un utilisateur qu’ils ont « liké » les « like » également en retour.
+- Lorsqu’ils reçoivent un « **like** ».
+- Lorsque leur profil a été **consulté**.
+- Lorsqu’ils reçoivent un **message**.
+- Lorsqu’un utilisateur qu’ils ont « **liké** » les « **like** » également **en** **retour**.
 - Lorsqu’un utilisateur connecté les « unlike »
 
 ## Cybersécurité
@@ -142,13 +142,33 @@ vulnérabilités de sécurité qui ne sont pas tolérées :
 
 ### Fronts
 
+#### pages
+
+- register 
+- login
+- password recovery
+- home
+- profil
+    - filter
+    - picture
+    - user name
+- history
+- setting
+
+
+header or footer:
+- deconnexion
+- chat
+- notification 
+
 ### Back
 
 ### API
 
-## Data Base
+## Data Base Diagram
 
 ![alt](./Ressources_README/db_diagram.png)
+
 
 
 ## Reférence
