@@ -172,3 +172,4 @@ header or footer:
 
 
 ## Reférence
+- [db diagram](https://dbdiagram.io): Pour la réflexion, création et représentation de la base de données.([code utilisé](./Ressources_README/db_diagram.txt))
