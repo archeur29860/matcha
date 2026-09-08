@@ -13,12 +13,16 @@ DATABASE_URL = (
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from routes.exemple_bp import exemple_bp
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 
 db = SQLAlchemy(app)
+
+# Enregistre le groupe de routes
+app.register_blueprint(exemple_bp)
 
 
 @app.route("/api/health")
