@@ -17,3 +17,7 @@ psql -U mon_utilisateur -d ma_base_de_donnees
 ```SQL
 SELECT * FROM users;
 ```
+## Documentation
+
+https://www.postgresql.org/docs/current/datatype-enum.html
+https://www.postgresql.org/docs/current/sql-insert.html
