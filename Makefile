@@ -1,4 +1,4 @@
-COMPOSE := COMPOSE_BAKE=true docker compose -f docker-compose.yml
+COMPOSE := COMPOSE_BAKE=true docker compose -f docker-compose.yaml
 
 all: build up
 
@@ -37,21 +37,18 @@ volume:
 
 clean:
 	$(MAKE) down 
-	mvn -f ./back-matcha/pom.xml clean
 
 prune: clean
 	docker system prune -f -a
 
 re: prune all
 
-mvn:
-	mvn -f ./back-matcha/pom.xml clean package
-
 matcha:
 	$(COMPOSE) exec app sh
 
 postgres:
 	$(COMPOSE) exec db sh
+# 	$(COMPOSE) exec db psql -U $$(POSTGRES_USER) -d $$(POSTGRES_DB)
 
 nginx:
 	$(COMPOSE) exec nginx sh

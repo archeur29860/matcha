@@ -19,7 +19,7 @@ services:
 
   db:
     build:
-      context: ./postgres
+      context: ./postgreSQL
       dockerfile: Dockerfile
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -32,6 +32,7 @@ services:
     networks:
       - webapp-net
     container_name: matcha_db
+    restart: always
 
   front:
     build:
