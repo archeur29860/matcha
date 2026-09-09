@@ -54,7 +54,7 @@ Table matches {
   created_at timestamp [not null]
 }
 
-Table conversations {
+Table chat {
   id uuid [not null]
   from_user_id uuid
   message string [not null]

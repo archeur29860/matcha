@@ -41,14 +41,6 @@ son compte
 - prénom
 - mot de passe sécurisé
 
-####  mot de passe sécurisé:
-
-- 8 caractère min
-- 1 Maj min
-- 1 caractère spécial min
-- 1 chiffre min
-- ne doit pas être un mot courant
-
 ### Connexion
 
 
@@ -112,7 +104,7 @@ Lors d'une consultation:
 - **Retirer un « like »** précédemment donné. Cela empêchera les notifications ultérieures de cet utilisateur, et la fonction de chat entre eux sera désactivée.
 - Consulter la « note de popularité » d’un autre utilisateur.
 - **actuellement en ligne** ou la date et l’heure de sa **dernière connexion**.
-- **Signaler** un utilisateur comme « faux compte », «scam» ou «problématique».
+- **Signaler**([*](./postgreSQL/Catalog.md#signaled)) un utilisateur comme « faux compte », «scam» ou «problématique».
 - **Bloquer un utilisateur**. Un utilisateur bloqué n’apparaîtra plus dans les résultats de recherche et ne générera plus de notifications. De plus, discuter avec lui ne sera plus possible.
 
 Les utilisateurs doivent clairement voir si le profil qu’ils consultent les a **« likés »** ou s’ils sont déjà **« connectés »**. Ils doivent également avoir la possibilité de **« unliker »** ou de se déconnecter de ce profil.
@@ -148,7 +140,6 @@ vulnérabilités de sécurité qui ne sont pas tolérées :
 - login
 - password recovery
 - home
-- profil
     - filter
     - picture
     - user name
@@ -159,7 +150,9 @@ vulnérabilités de sécurité qui ne sont pas tolérées :
 header or footer:
 - deconnexion
 - chat
-- notification 
+- notification
+
+![pages](./Ressources_README/page_architecture.png)
 
 ### Back
 
