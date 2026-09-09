@@ -43,6 +43,15 @@ prune: clean
 
 re: prune all
 
+re_back:
+	docker compose up -d --build app
+
+re_front:
+	docker compose up -d --build front
+
+re_db:
+	docker compose up -d --build db
+
 matcha:
 	$(COMPOSE) exec app sh
 
@@ -53,4 +62,4 @@ postgres:
 nginx:
 	$(COMPOSE) exec nginx sh
 
-.PHONY: all up build start restart stop down ps logs images volume clean prune matcha postgres nginx re
+.PHONY: all up build start restart stop down ps logs images volume clean prune matcha postgres nginx re re_back re_front re_db

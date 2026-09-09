@@ -88,8 +88,8 @@ CREATE TABLE IF NOT EXISTS blocked (
 
 ---- TAGS ----
 CREATE TABLE IF NOT EXISTS tags (
-  index integer PRIMARY KEY,
-  label VARCHAR(25)
+  id SERIAL PRIMARY KEY,
+  label VARCHAR(25) UNIQUE
 );
 
 
@@ -120,4 +120,4 @@ INSERT INTO users (email, username, last_name, first_name, password, last_connec
 ) ON CONFLICT DO NOTHING;
 
 
-INSERT INTO tags (label) VALUES (vegan), (geek), (piercing) ON CONFLICT DO NOTHING;
+INSERT INTO tags (label) VALUES ('vegan'), ('geek'), ('piercing') ON CONFLICT DO NOTHING;

@@ -168,9 +168,12 @@ user(signaled): defaut à 0, si l'indicateur arrive à 5 le profil est supprimé
 
 ### tags table
 
-###### index:
-- index du tag
+###### id:
+- index du tag auto increment
 
 ###### label:
 - text
 - max 25 caractères
+- ne peut pas être en doublon
+- fautes d'orthographe toléré
+- ne peut être modifier ou supprimer par l'utilisateur

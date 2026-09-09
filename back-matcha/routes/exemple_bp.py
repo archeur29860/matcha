@@ -1,4 +1,4 @@
-from Flask import Blueprint
+from flask import Blueprint, request
 from models.exemple_model import Exemple
 
 # Définition d'un Blueprint (bp), pour faire des groupes de routes Flask
