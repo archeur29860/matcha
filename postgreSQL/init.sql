@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS userProfile(
 
 --- interaction ---
 CREATE TABLE IF NOT EXISTS interaction (
-  id uuid ,
+  id uuid,
   from_user_id uuid,
   to_user_id uuid,
   which_interaction type_of_interaction,
@@ -46,16 +46,16 @@ CREATE TABLE IF NOT EXISTS interaction (
 ---- MATCHES ---- 
 CREATE TABLE IF NOT EXISTS matches (
   id uuid,
-  user_low_id uuid DEFAULT NOT NULL,
-  user_high_id uuid DEFAULT NOT NULL,
-  conversation_id uuid DEFAULT NOT NULL,
-  created_at TIMESTAMP DEFAULT NOT NULL,
+  user_low_id uuid,
+  user_high_id uuid,
+  conversation_id uuid,
+  created_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS chat (
-  id uuid DEFAULT NOT NULL,
+  id uuid,
   from_user_id uuid,
-  message string DEFAULT NOT NULL,
+  message VARCHAR,
   sended_at TIMESTAMP
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS blocked (
 
 CREATE TABLE IF NOT EXISTS tags (
   index integer PRIMARY KEY,
-  label string DEFAULT NOT NULL
+  label VARCHAR
 );
 
 
@@ -83,5 +83,15 @@ INSERT INTO users (email, username, last_name, first_name, password, last_connec
   '$2b$10$fictionalhashforjulien', 
   CURRENT_TIMESTAMP,
   true, 
+  0
+),
+(
+  'julie.b@matcha.fr', 
+  'julie_paris', 
+  'Basseur', 
+  'Julie', 
+  '$2b$1d0$fictionalhashforjulien', 
+  CURRENT_TIMESTAMP,
+  false, 
   0
 ) ON CONFLICT DO NOTHING;
