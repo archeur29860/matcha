@@ -26,4 +26,4 @@ def get_all_tags():
     )
 
     tags = result.mappings()
-    return dict(tags)
+    return tags.all()

@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from models.tags_m import Tags
-from services.tags_service import add_tag
+import services.tags_service as s
 
 tags_bp = Blueprint("tags", __name__, url_prefix="/api/tags")
 
@@ -22,7 +22,7 @@ def create_tag():
     if len(label) > 25:
         return {"error": "label must be 25 characters or less"}, 400
     
-    result = add_tag(label)
+    result = s.add_tag(label)
 
     if result is None:
         return {"error": "Tag already exists"}, 409
@@ -31,3 +31,16 @@ def create_tag():
         "id": result["id"],
         "label": result["label"]
         }, 201
+
+@tags_bp.route("/", methods=["GET"])
+def get_all_tags():
+    
+    result = s.get_all_tags()
+
+    return [
+        {
+            "id": tag["id"],
+            "label": tag["label"]
+        }
+        for tag in result
+    ], 200
