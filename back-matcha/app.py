@@ -1,5 +1,6 @@
 import os
 from database import db
+from utils.error_handler import register_error_handlers
 
 DB_HOST = os.environ["DB_HOST"]
 DB_PORT = os.environ["DB_PORT"]
@@ -33,6 +34,7 @@ db.init_app(app)
 app.register_blueprint(tags_bp)
 app.register_blueprint(blocked_bp)
 
+register_error_handlers(app)
 
 @app.route("/api/health")
 def health():

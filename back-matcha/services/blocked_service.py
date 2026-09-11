@@ -2,6 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from database import db
 
+from utils.exceptions import AppError
 import traceback
 
 def insert_relation(user_id, user_id_blocked):
@@ -21,13 +22,18 @@ def insert_relation(user_id, user_id_blocked):
         db.session.commit()
         return dict(relation)
 
-    except Exception as e:
+    except IntegrityError:
         db.session.rollback()
-        print("===== ERREUR =====")
-        print(f"Type : {type(e).__name__}")
-        print(f"Message : {e}")
-        traceback.print_exc()
-        return None
+
+        raise AppError(
+            code="BLOCK_ALREADY_EXISTS",
+            message="This block relation already exists",
+            status_code=409
+        )
+
+    except Exception:
+        db.session.rollback()
+        raise
 
 def delete_relation(user_id, user_id_blocked):
     try:
@@ -44,7 +50,7 @@ def delete_relation(user_id, user_id_blocked):
             }
         )
 
-        relation = result.mappings().one_or_none()
+        relation = result.mappings().first()
 
         if relation is None:
             db.session.rollback()
@@ -53,8 +59,16 @@ def delete_relation(user_id, user_id_blocked):
         db.session.commit()
 
         return dict(relation)
+    
+    except IntegrityError:
+        db.session.rollback()
+
+        raise AppError(
+            code="BLOCK_ALREADY_EXISTS",
+            message="This block relation already exists",
+            status_code=409
+        )
 
     except Exception:
         db.session.rollback()
-        traceback.print_exc()
-        return None   
+        raise  

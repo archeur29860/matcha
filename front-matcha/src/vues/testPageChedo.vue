@@ -8,7 +8,6 @@ const user_id = ref("");
 const user_id_blocked = ref("");
 
 async function post_body() {
-    console.log(user_id.value, user_id_blocked.value)
 
     const response = await fetch(`http://localhost:5000/api/${URLAPI}/`, {
         method: 'POST',
