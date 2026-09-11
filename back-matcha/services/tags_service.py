@@ -2,7 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from database import db
 
-def add_tag(new_label):
+def insert_tag(new_label):
 
     try :
         result = db.session.execute(
@@ -22,7 +22,8 @@ def add_tag(new_label):
 
 def get_all_tags():
     result = db.session.execute(
-        text("SELECT * FROM tags")
+        text("SELECT * FROM tags \
+        ORDER BY label ASC")
     )
 
     tags = result.mappings()

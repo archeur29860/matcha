@@ -1,34 +1,39 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const label = ref("");
-const taglist = ref({});
+const URLAPI = "blocked"
+const LIST_REF = ref({});
 
-async function clicked() {
-    console.log(label.value);
+const user_id = ref("");
+const user_id_blocked = ref("");
 
-    const response = await fetch('http://localhost:5000/api/tags/', {
+async function post_body() {
+    console.log(user_id.value, user_id_blocked.value)
+
+    const response = await fetch(`http://localhost:5000/api/${URLAPI}/`, {
         method: 'POST',
         headers: {
             'Content-Type':'application/json',
         },
         body: JSON.stringify({
-            label: label.value,
+            user_id: user_id.value,
+            user_id_blocked: user_id_blocked.value,
         }),
     });
 
     const data = await response.json();
-
+    
     if (!response.ok) {
         console.error('Erreur HTTP:', response.status, data.error);
         return;
     }
-
-    taglist = await response.json();
+    
+    LIST_REF.value = data;
+    console.log(data)
 }
 
 async function get_list() {
-    const response = await fetch('http://localhost:5000/api/tags/');
+    const response = await fetch(`http://localhost:5000/api/${URLAPI}/`);
 
     const data = await response.json();
 
@@ -37,22 +42,35 @@ async function get_list() {
         return;
     }
 
-    taglist.value = data;
+    LIST_REF.value = data;
 }
 
 </script>
 
 <template>
     <h1>CHEDO TEST</h1>
-    <p> TAG = 
-        <input 
-        type="text" 
-        id="add_tag_id" 
-        name="add_tag_name" 
-        maxlength="25" 
-        v-model="label" /> </p>
-    <button @click=clicked()>send</button>
-
-    <button @click=get_list()>getlist</button>
-    <div v-for="tag in taglist"><p>{{tag}}</p></div>
+    <div class="border">
+        <h2>POST {{ URLAPI }}</h2>
+        FORM
+        <p>user_id<input v-model="user_id"/></p>
+        <p>user_id_blocked<input v-model="user_id_blocked"/></p>
+        <button @click=post_body()>send</button>
+    </div>
+    <button @click=get_list()>GET ALL</button>
+    <div v-for="item in LIST_REF" class="border"><p>=>{{item}}</p></div>
 </template>
+
+<style lang="css" scoped>
+.container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    -ms-flex-align: center;
+}
+.border {
+    border: 0.2rem solid;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+</style>

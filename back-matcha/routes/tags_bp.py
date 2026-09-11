@@ -22,7 +22,7 @@ def create_tag():
     if len(label) > 25:
         return {"error": "label must be 25 characters or less"}, 400
     
-    result = s.add_tag(label)
+    result = s.insert_tag(label)
 
     if result is None:
         return {"error": "Tag already exists"}, 409
