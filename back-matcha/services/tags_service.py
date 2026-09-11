@@ -11,20 +11,34 @@ def insert_tag(new_label):
             {"n_label": new_label}
         )
 
-        tags = result.mappings().one()
+        tag = result.mappings().one()
+
         db.session.commit()
-        return dict(tags)
+
+        return dict(tag)
 
     except IntegrityError:
         db.session.rollback()
-        return None
+        raise ConflictError(
+            "Resource already exists"
+        )
+
+    except Exception:
+        db.session.rollback()
+        raise
 
 
 def get_all_tags():
-    result = db.session.execute(
-        text("SELECT * FROM tags \
-        ORDER BY label ASC")
-    )
+    try :
+        result = db.session.execute(
+            text("SELECT * FROM tags \
+            ORDER BY label ASC")
+        )
 
-    tags = result.mappings()
-    return tags.all()
+        tags = result.mappings().all()
+
+        return [dict(tag) for tag in tags]
+
+    except Exception:
+        db.session.rollback()
+        raise
