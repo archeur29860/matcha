@@ -10,6 +10,7 @@
 
 #### users table
 
+Si un champs n'est pas rempli, l'user ne pas utiliser des fonctions de l'application
 
 ###### id:
 unique 
@@ -18,11 +19,13 @@ unique
 - contient juste un @
 - contient juste un . 
 - max: 255 caractères
+- unique
 
 ###### username:
 
 - caractère autorisé: alphanumérique
 - max: 50 caractères
+- unique
 
 ###### last_name:
 
@@ -53,6 +56,8 @@ user(signaled): defaut à 0, si l'indicateur arrive à 5 le profil est supprimé
 ----------------
 
 ### usersProfile table
+
+Si un champs n'est pas rempli, l'user ne pas utiliser des fonctions de l'application
 
 ###### user_id:
 - lié à users(id)

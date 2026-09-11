@@ -18,6 +18,7 @@ from flask_cors import CORS
 
 # from routes.exemple_bp import exemple_bp
 from routes.tags_bp import tags_bp
+from routes.users_bp import users_bp
 
 app = Flask(__name__)
 
@@ -30,7 +31,7 @@ db.init_app(app)
 # Enregistre le groupe de routes
 # app.register_blueprint(exemple_bp)
 app.register_blueprint(tags_bp)
-
+app.register_blueprint(users_bp)
 
 @app.route("/api/health")
 def health():
