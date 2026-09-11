@@ -28,3 +28,33 @@ def insert_relation(user_id, user_id_blocked):
         print(f"Message : {e}")
         traceback.print_exc()
         return None
+
+def delete_relation(user_id, user_id_blocked):
+    try:
+        result = db.session.execute(
+            text("""
+                DELETE FROM blocked
+                WHERE user_id = :user_id
+                AND user_id_blocked = :user_id_blocked
+                RETURNING user_id, user_id_blocked
+            """),
+            {
+                "user_id": user_id,
+                "user_id_blocked": user_id_blocked
+            }
+        )
+
+        relation = result.mappings().one_or_none()
+
+        if relation is None:
+            db.session.rollback()
+            return None
+
+        db.session.commit()
+
+        return dict(relation)
+
+    except Exception:
+        db.session.rollback()
+        traceback.print_exc()
+        return None   
