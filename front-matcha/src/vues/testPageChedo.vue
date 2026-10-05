@@ -32,7 +32,7 @@ async function post_body() {
 }
 
 async function get_list() {
-    const response = await fetch(`http://localhost:5000/api/${URLAPI}/`);
+    const response = await fetch(`http://localhost:5000/api/${URLAPI}/${user_id.value}/`);
 
     const data = await response.json();
 
@@ -86,9 +86,10 @@ async function delete_item() {
         <p>user_id_blocked<input v-model="user_id_blocked"/></p>
         <button @click=post_body()>send</button>
     </div>
+    user_id = {{ user_id }}
     <button @click=get_list()>GET ALL</button>
     <button @click=delete_item()>delete</button>
-    <div v-for="item in LIST_REF" class="border"><p>=>{{item}}</p></div>
+    <div v-for="item in LIST_REF.data" class="border"><p>=>{{item}}</p></div>
 </template>
 
 <style lang="css" scoped>
