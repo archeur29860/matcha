@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
   last_connection DATE,
   is_online BOOLEAN DEFAULT false,
   signaled INTEGER DEFAULT 0,
+
   --- PK ---
   PRIMARY KEY (id)
 );
@@ -30,10 +31,11 @@ CREATE TABLE IF NOT EXISTS userProfile(
   gender gender_type DEFAULT 'Other',
   gender_pref gender_type[] DEFAULT '{Male, Female}',
   bio TEXT,
-  pictures TEXT[],
+  picture_profile_index INT,
   popularity INT DEFAULT 0,
   localisation VARCHAR(255) DEFAULT NULL,
   tags INT[],
+
   --- Constraint --- 
   CONSTRAINT fk_user
     FOREIGN KEY (user_id) 
@@ -42,13 +44,38 @@ CREATE TABLE IF NOT EXISTS userProfile(
 );
 
 
+--- pictures ---
+CREATE TABLE IF NOT EXISTS pictures (
+  index INT NOT NULL,
+  user_id UUID NOT NULL,
+  url VARCHAR(255) NOT NULL,
+
+  --- Constraint ---
+  CONSTRAINT fk_user
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+);
+
+
 --- interaction ---
 CREATE TABLE IF NOT EXISTS interaction (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   from_user_id UUID,
   to_user_id UUID,
   which_interaction type_of_interaction,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  --- Constraint ---
+  CONSTRAINT fk_from_user
+    FOREIGN KEY (from_user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+  
+  CONSTRAINT fk_to_user
+    FOREIGN KEY (to_user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
 );
 
 ---- MATCHES ---- 
@@ -60,7 +87,18 @@ CREATE TABLE IF NOT EXISTS matches (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   --- PK ---
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+
+  --- Constraint ---
+  CONSTRAINT fk_low_user
+    FOREIGN KEY (user_low_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+  
+  CONSTRAINT fk_high_user
+    FOREIGN KEY (user_high_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
 );
 
 
@@ -73,7 +111,7 @@ CREATE TABLE IF NOT EXISTS chat (
   is_read BOOLEAN DEFAULT false,
 
   --- Constraint --- 
-  CONSTRAINT fk_user
+  CONSTRAINT fk_chat_id
     FOREIGN KEY (id) 
     REFERENCES matches(chat_id) 
     ON DELETE CASCADE
@@ -82,7 +120,18 @@ CREATE TABLE IF NOT EXISTS chat (
 ---- BLOCKED -----
 CREATE TABLE IF NOT EXISTS blocked (
   user_id UUID,
-  user_id_blocked UUID
+  user_id_blocked UUID,
+
+  --- Constraint ---
+  CONSTRAINT fk_user
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+  
+  CONSTRAINT fk_user_blocked
+    FOREIGN KEY (user_id_blocked)
+    REFERENCES users(id)
+    ON DELETE CASCADE
 );
 
 
