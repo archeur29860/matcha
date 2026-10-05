@@ -6,7 +6,7 @@ import services.interaction_service as s
 
 interaction_bp = Blueprint("interaction", __name__, url_prefix="/api/interaction")
 
-@interaction_bp.route("/<uuid:user_id>/", methods=["GET"])
+@interaction_bp.route("/from/<uuid:user_id>/", methods=["GET"])
 def get_all_interaction_from_user_id(user_id):
 
     user_id = validate_uuid(user_id, "user_id")
