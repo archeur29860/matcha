@@ -71,4 +71,21 @@ def delete_relation(user_id, user_id_blocked):
 
     except Exception:
         db.session.rollback()
-        raise  
+        raise
+
+def get_all_blocked_user_id(user_id):
+    try:
+        result = db.session.execute(
+            text("""
+            SELECT user_id_blocked FROM blocked
+            WHERE user_id = :user_id
+            """),
+            {
+                "user_id" : user_id
+            }
+        )
+
+        relations = result.mapping().all()
+
+        if relations is None:
+            db.session.rollback()
