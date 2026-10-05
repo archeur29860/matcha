@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS pictures (
   --- Constraint ---
   CONSTRAINT fk_user
     FOREIGN KEY (user_id)
-    REFERENCES users(user_id)
+    REFERENCES users(id)
     ON DELETE CASCADE
 );
 
@@ -69,12 +69,12 @@ CREATE TABLE IF NOT EXISTS interaction (
   --- Constraint ---
   CONSTRAINT fk_from_user
     FOREIGN KEY (from_user_id)
-    REFERENCES users(user_id)
+    REFERENCES users(id)
     ON DELETE CASCADE,
   
   CONSTRAINT fk_to_user
     FOREIGN KEY (to_user_id)
-    REFERENCES users(user_id)
+    REFERENCES users(id)
     ON DELETE CASCADE
 );
 
@@ -92,12 +92,12 @@ CREATE TABLE IF NOT EXISTS matches (
   --- Constraint ---
   CONSTRAINT fk_low_user
     FOREIGN KEY (user_low_id)
-    REFERENCES users(user_id)
+    REFERENCES users(id)
     ON DELETE CASCADE,
   
   CONSTRAINT fk_high_user
     FOREIGN KEY (user_high_id)
-    REFERENCES users(user_id)
+    REFERENCES users(id)
     ON DELETE CASCADE
 );
 
@@ -125,12 +125,12 @@ CREATE TABLE IF NOT EXISTS blocked (
   --- Constraint ---
   CONSTRAINT fk_user
     FOREIGN KEY (user_id)
-    REFERENCES users(user_id)
+    REFERENCES users(id)
     ON DELETE CASCADE,
   
   CONSTRAINT fk_user_blocked
     FOREIGN KEY (user_id_blocked)
-    REFERENCES users(user_id)
+    REFERENCES users(id)
     ON DELETE CASCADE
 );
 

@@ -80,7 +80,7 @@ def get_all_blocked_user(user_id):
             SELECT u.id, u.username, u.last_name, u.first_name
             FROM blocked b
             JOIN users u
-            ON b.user_id_blocked = u.user_id
+            ON b.user_id_blocked = u.id
             WHERE b.user_id = :user_id
             """),
             {
