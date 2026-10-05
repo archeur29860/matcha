@@ -20,21 +20,25 @@ unique
 - contient juste un . 
 - max: 255 caractères
 - unique
+- non null
 
 ###### username:
 
 - caractère autorisé: alphanumérique
 - max: 50 caractères
 - unique
+- non null
 
 ###### last_name:
 
 - caractère autorisé: alpha, ' ', '-'
 - max: 100 caractères
+- non null
 
 ###### first_name:
 - caractère autorisé: alpha, ' ', '-'
 - max: 50 caractères
+- non null
 
 ###### password:
 - 8 caractères min
@@ -43,6 +47,7 @@ unique
 - 1 chiffre min
 - ne doit pas être un mot courant
 - ne doit pas contenir son nom ou prénom
+- non null
 
 ###### last_connection:
 - le jour de sa dernière connection
@@ -173,12 +178,14 @@ Si un champs n'est pas rempli, l'user ne pas utiliser des fonctions de l'applica
 
 ### tags table
 
+on n'en supprime pas
+
 ###### id:
 - index du tag auto increment
 
 ###### label:
 - text
 - max 25 caractères
-- ne peut pas être en doublon
+- unique, ne peut pas être en doublon
 - fautes d'orthographe toléré
 - ne peut être modifier ou supprimer par l'utilisateur

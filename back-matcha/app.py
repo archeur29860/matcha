@@ -1,5 +1,6 @@
 import os
 from database import db
+from utils.error_handler import register_error_handlers
 
 DB_HOST = os.environ["DB_HOST"]
 DB_PORT = os.environ["DB_PORT"]
@@ -18,6 +19,7 @@ from flask_cors import CORS
 
 # from routes.exemple_bp import exemple_bp
 from routes.tags_bp import tags_bp
+from routes.blocked_bp import blocked_bp
 from routes.users_bp import users_bp
 
 app = Flask(__name__)
@@ -31,7 +33,9 @@ db.init_app(app)
 # Enregistre le groupe de routes
 # app.register_blueprint(exemple_bp)
 app.register_blueprint(tags_bp)
+app.register_blueprint(blocked_bp)
 app.register_blueprint(users_bp)
+register_error_handlers(app)
 
 @app.route("/api/health")
 def health():

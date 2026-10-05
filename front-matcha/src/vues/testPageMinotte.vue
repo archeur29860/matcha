@@ -3,12 +3,14 @@ import { ref } from 'vue';
 
 
 
-const email = ref("");
+const email = ref('');
 const mail = ref({});
-const password = ref('')
-const username = ref('')
-const last_name = ref('')
-const first_name = ref('')
+const password = ref('');
+const username = ref('');
+const last_name = ref('');
+const first_name = ref('');
+
+const user_id = ref('e7329773-9845-4cbc-a85f-9a2864fdb2fe');
 
 async function clicked() {
     console.log(email.value);
@@ -23,7 +25,7 @@ async function clicked() {
                 username: username.value,
                 last_name : last_name.value,
                 first_name : first_name.value,
-                password : password.value
+                password : password.value,
             }),
         });
 
@@ -41,24 +43,72 @@ async function clicked() {
         console.error("Erreur réseau :", error);
     }
 }
+
+
+async function clicked_modify() {
+    try {
+        const response = await fetch(
+            `http://localhost:5000/api/users/`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: user_id.value,
+                    email: email.value,
+                    username: username.value,
+                    last_name: last_name.value,
+                    first_name: first_name.value,
+                    password: password.value,
+                }),
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error(
+                'Error HTTP:',
+                response.status,
+                data.error
+            );
+            return;
+        }
+
+        let dataItem = data.data;
+
+        console.log("User modified :", dataItem);
+
+    } 
+    
+    catch (error) {
+        console.error("Network error:", error);
+    }
+}
+
+   
+
 </script>
 
 <template>
     <h1>MINOTTE TEST</h1>
+
+    user_id = {{ user_id }}
     <p> email : 
         <input 
         type="email" 
         id="email" 
         name="add_email" 
         maxlength="25" 
-        v-model="email" /> </p>
-    <p> username : 
-        <input 
-        type="text" 
-        id="username" 
-        name="add_username" 
-        maxlength="25" 
-        v-model="username" /> </p>
+        v-model="email" /></p>
+        <p> username : 
+            <input 
+            type="text" 
+            id="username" 
+            name="add_username" 
+            maxlength="25" 
+            v-model="username" /> </p>
     <p> last name : 
         <input 
         type="text" 
@@ -66,20 +116,21 @@ async function clicked() {
         name="add_last_name" 
         maxlength="25" 
         v-model="last_name" /> </p>
-    <p> first name : 
-        <input 
-        type="text" 
+        <p> first name : 
+            <input 
+            type="text" 
         id="first_name" 
         name="add_first_name" 
         maxlength="25" 
         v-model="first_name" /> </p>
-    <p> password : 
-        <input 
+        <p> password : 
+            <input 
         type="password" 
         id="password" 
         name="add_password" 
         maxlength="25" 
         v-model="password" /> </p>
-    <button @click=clicked()>send</button>
+        <button @click=clicked()>send</button>
+        <button @click=clicked_modify()>modify</button>     const data = await response.json();
 
 </template>

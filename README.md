@@ -15,6 +15,8 @@ et consulter les profils d’autres utilisateurs, et exprimer leur intérêt pou
 
 3- [Profil utilisateur](#profil-utilisateur)
 
+4- [Normes API - Flask/Vue](./back-matcha/normes_api.md)
+
 ## Règles à respecter
 
 - Aucune erreur, warning ou notice ne doit être produite par l'Application.

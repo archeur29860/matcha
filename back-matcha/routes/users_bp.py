@@ -1,10 +1,87 @@
 from flask import Blueprint, request
 from models.users_m import Users
 import services.users_service as u
+from utils.validate import validate_len_string, validate_uuid
+from utils.response import success
 
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
 @users_bp.route("/", methods=["POST"])
+
+
+def create_user():
+    data = request.get_json()
+    all_field_content = {}
+    if not data:
+        return {"error":"JSON body required"}, 400
+
+    required_fields = [
+        "email",
+        "username",
+        "last_name",
+        "first_name",
+        "password"
+    ]
+
+    for field in required_fields:
+        if field not in data:
+          return {"error": f"The field '{field}' is required"}, 400
+        field_content = data[field].strip()
+        if not field_content:
+            return {"error": f"{field} cannot be empty"}, 400
+    
+        if field == "email" or  field == "password":
+            validate_len_string(field_content, field, 256)
+        else:
+            validate_len_string(field_content, field, 51)
+        all_field_content[field] = field_content
+
+    
+    result = u.add_user(all_field_content)
+
+    if result is None:
+        return {"error": "email already exists"}, 409
+
+    return result, 201
+
+@users_bp.route("/", methods=["PUT"])
+def modify_user():
+    data = request.get_json()
+    all_field_content = {}
+    if not data:
+        return {"error":"JSON body required"}, 400
+    
+    required_fields = [
+        "email",
+        "username",
+        "last_name",
+        "first_name",
+        "password"
+    ]
+
+    for field in required_fields:
+        if field not in data:
+          return {"error": f"The field '{field}' is required"}, 400
+        field_content = data[field].strip()
+        if not field_content:
+            return {"error": f"{field} cannot be empty"}, 400
+    
+        if field == "email" or  field == "password":
+            validate_len_string(field_content, field, 256)
+        else:
+            validate_len_string(field_content, field, 51)
+        all_field_content[field] = field_content
+    all_field_content["user_id"] = validate_uuid(data["user_id"], "id")
+
+    result = u.modify_user(all_field_content)
+
+    if result is None:
+        return {"error": "User not found"}, 404
+
+    return success(result, 200)
+
+
+
 # def modify_email():
 #     data = request.get_json()
 
@@ -41,7 +118,7 @@ users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 #         return {"error" : "username is required"}, 400
     
 #     username = data["username"].strip()
-
+#  user_id = 
 #     if not username:
 #         return {"error": "username cannot be empty"}, 400
     
@@ -184,33 +261,18 @@ users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
 
 
-
-def create_user():
-    data = request.get_json()
-    all_field_content = {}
-    if not data:
-        return {"error":"JSON body required"}, 400
-
-    required_fields = ["email", "username", "last_name", "first_name", "password"]
-    for field in required_fields:
-        if field not in data:
-          return {"error": f"The field '{field}' is required"}, 400
-        field_content = data[field].strip()
-        if not field_content:
-            return {"error": f"{field} cannot be empty"}, 400
+# @users_bp.route("/", methods=["GET"])
+# def get_all_users():
     
-        if field == "email" or  field == "password":
-            if len(field) > 255:
-                return {"error": f"{field} must be 255 characters or less"}, 400
-        else:
-            if len(field) > 50:
-                return {"error": f"{field} must be 50 characters or less"}, 400
-        all_field_content[field] = field_content
+#     result = s.get_all_users()
 
-    
-    result = u.add_user(all_field_content)
-
-    if result is None:
-        return {"error": "email already exists"}, 409
-
-    return result, 201
+#     return [
+#         {
+#             "email": users["email"],
+#             "username": users["username"]
+#             "last_name": users["last_name"]
+#             "first_name": users["first_name"]
+#             "password": users["password"]
+#         }
+#         for tag in result
+#     ], 200
