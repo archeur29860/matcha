@@ -32,7 +32,7 @@ Table userProfile {
   status gender [default: gender.Other]
   gender_pref "gender[3]" [default: '{Male,Female}']
   bio string
-  pictures "text[]"
+  picture_profile_index integer
   popularity integer
   localisation string [default: null]
   tags "integer[]"
@@ -50,7 +50,7 @@ Table matches {
   id uuid [pk]
   user_low_id uuid [not null]
   user_high_id uuid [not null]
-  conversation_id uuid [pk, not null]
+  chat_id uuid [pk, not null]
   created_at timestamp [not null]
 }
 
@@ -71,5 +71,13 @@ Table tags {
   label string [not null]
 }
 
-Ref: "user"."id" < "userProfile"."user_id"
-Ref: "matches".conversation_id < "conversations".id
+Table pictures {
+  index integer [not null]
+  user_id uuid [not null]
+  url string [not null]
+}
+
+Ref: user.id - userProfile.user_id
+Ref: matches.chat_id - chat.id
+Ref: userProfile.(user_id, picture_profile_index) - pictures.(user_id, index)
+Ref: pictures.user_id > userProfile.user_id

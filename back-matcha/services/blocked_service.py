@@ -2,7 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from database import db
 
-from utils.exceptions import AppError
+from utils.exceptions import AppError, NotFoundError
 import traceback
 
 def insert_relation(user_id, user_id_blocked):
@@ -73,19 +73,35 @@ def delete_relation(user_id, user_id_blocked):
         db.session.rollback()
         raise
 
-def get_all_blocked_user_id(user_id):
+def get_all_blocked_user(user_id):
     try:
         result = db.session.execute(
             text("""
-            SELECT user_id_blocked FROM blocked
-            WHERE user_id = :user_id
+            SELECT u.id, u.username, u.last_name, u.first_name
+            FROM blocked b
+            JOIN users u
+            ON b.user_id_blocked = u.user_id
+            WHERE b.user_id = :user_id
             """),
             {
                 "user_id" : user_id
             }
         )
 
-        relations = result.mapping().all()
+        relations = result.mappings().all()
 
         if relations is None:
             db.session.rollback()
+            raise NotFoundError
+
+        return [
+            {
+                "username": row["username"],
+                "last_name": row["last_name"],
+                "first_name": row["first_name"]
+            }
+            for row in result.mappings().all()
+        ]
+
+    except Exception:
+        raise
