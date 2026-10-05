@@ -63,3 +63,7 @@ def unblock_a_profile():
     )
 
     return success(result, 200)
+
+@blocked_bp.route("/<uuid:user_id>", methods=["GET"])
+def get_all_blocked_user(user_id):
+    blocked_list = s.
