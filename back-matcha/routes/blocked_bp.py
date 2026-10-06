@@ -28,9 +28,6 @@ def block_a_profil():
         "user_id_blocked"
     )
     result = s.insert_relation(user_id, user_id_blocked)
-    
-    if result is None:
-        return success(status=204)
 
     return success(result, 201)
 
