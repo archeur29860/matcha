@@ -98,7 +98,10 @@ CREATE TABLE IF NOT EXISTS matches (
   CONSTRAINT fk_high_user
     FOREIGN KEY (user_high_id)
     REFERENCES users(id)
-    ON DELETE CASCADE
+    ON DELETE CASCADE, 
+  
+  CONSTRAINT unique_block_relation
+    UNIQUE (user_low_id, user_high_id)
 );
 
 
