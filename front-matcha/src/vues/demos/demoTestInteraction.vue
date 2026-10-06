@@ -4,29 +4,35 @@ import { new_iteraction, get_list_interaction_from, get_list_interaction_to } fr
 
 const LIST_REF = ref({});
 
-const user_id1 = ref("cc7cbee6-166d-478f-9224-430fe114d36c");
-const user_id2 = ref("f45281fe-8f39-4019-929a-20510970389e");
+const user_id1 = ref("a924634f-42a9-4ab8-89ef-bf748f88ed57");
+const user_id2 = ref("477f3a35-c5b2-4077-95e2-264faa1426e5");
 const status = ref("Liked")
 
 async function create_inter(){
     const response = await new_iteraction(user_id1.value, user_id2.value, status.value);
 
     console.log(response)
-    LIST_REF.value = response.data;
+    if (response?.data) {
+        LIST_REF.value = response.data
+    }
 }
 
 async function get_list_from(){
     const response = await get_list_interaction_from(user_id1.value);
 
     console.log(response)
-    LIST_REF.value = response.data.items
+    if (response?.data) {
+        LIST_REF.value = response.data.items
+    }
 }
 
 async function get_list_to(){
     const response = await get_list_interaction_to(user_id2.value);
 
     console.log(response)
-    LIST_REF.value = response.data.items
+    if (response?.data) {
+        LIST_REF.value = response.data.items
+    }
 }
 </script>
 

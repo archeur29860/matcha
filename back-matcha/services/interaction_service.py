@@ -24,14 +24,35 @@ def create_interaction(from_uid, to_uid, typeof_inter):
         new_interaction = result.mappings().one()
         db.session.commit()
         return dict(new_interaction)
-
+    
     except IntegrityError as e:
         db.session.rollback()
+
+        constraint = getattr(e.orig.diag, "constraint_name", None)
+
+        # 1. from_user_id n'existe pas
+        if constraint == "fk_from_user":
+            raise AppError(
+                code="FROM_USER_NOT_FOUND",
+                message="The user does not exist",
+                status_code=404
+            )
+
+        # 2. to_user_id_blocked n'existe pas
+        if constraint == "fk_to_user":
+            raise AppError(
+                code="TO_USER_NOT_FOUND",
+                message="The user you are interacting with does not exist",
+                status_code=404
+            )
+
+        # 3. IntegrityError non prévu
         raise AppError(
             code="INTEGRITY_ERROR",
-            message=e.orig.diag.message_detail,
+            message="The block relation could not be created",
             status_code=409
         )
+
     except Exception:
         db.session.rollback()
         raise
@@ -41,7 +62,7 @@ def get_all_interaction_from(user_id, limit=20, cursor=None):
 
     # Composition de la query
     query = """
-        SELECT u.username, i.which_interaction, i.created_at
+        SELECT u.username, i.to_user_id, i.which_interaction, i.created_at
         FROM interaction i
         JOIN users u
         ON i.to_user_id = u.id
@@ -100,7 +121,7 @@ def get_all_interaction_from(user_id, limit=20, cursor=None):
 def get_all_interaction_to(user_id, limit=20, cursor=None):
    # Composition de la query
     query = """
-        SELECT u.username, i.which_interaction, i.created_at
+        SELECT u.username, i.from_user_id, i.which_interaction, i.created_at
         FROM interaction i
         JOIN users u
         ON i.from_user_id = u.id

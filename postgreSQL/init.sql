@@ -131,7 +131,10 @@ CREATE TABLE IF NOT EXISTS blocked (
   CONSTRAINT fk_user_blocked
     FOREIGN KEY (user_id_blocked)
     REFERENCES users(id)
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
+  
+  CONSTRAINT unique_block_relation
+    UNIQUE (user_id, user_id_blocked)
 );
 
 
