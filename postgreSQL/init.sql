@@ -140,33 +140,3 @@ CREATE TABLE IF NOT EXISTS tags (
   id SERIAL PRIMARY KEY,
   label VARCHAR(25) UNIQUE
 );
-
-
-
-
------- TO START WITH SOME FAKE PROFILES -------
-
-INSERT INTO users (email, username, last_name, first_name, password, last_connection, is_online, signaled) VALUES
-(
-  'julien.v@matcha.fr', 
-  'julien_paris', 
-  'Vasseur', 
-  'Julien', 
-  '$2b$10$fictionalhashforjulien', 
-  CURRENT_TIMESTAMP,
-  true, 
-  0
-),
-(
-  'julie.b@matcha.fr', 
-  'julie_paris', 
-  'Basseur', 
-  'Julie', 
-  '$2b$1d0$fictionalhashforjulien', 
-  CURRENT_TIMESTAMP,
-  false, 
-  0
-) ON CONFLICT DO NOTHING;
-
-
-INSERT INTO tags (label) VALUES ('vegan'), ('geek'), ('piercing') ON CONFLICT DO NOTHING;

@@ -2,3 +2,4 @@ Flask
 Flask-SQLAlchemy
 psycopg[binary]
 flask-cors
+Faker==40.41.0
