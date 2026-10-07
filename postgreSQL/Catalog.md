@@ -82,9 +82,9 @@ Si un champs n'est pas rempli, l'user ne pas utiliser des fonctions de l'applica
 ###### bio:
 - texte pour se présenter 
 
-###### pictures:
-- max 5
-- min une pour utiliser l'application
+###### picture_profile_index:
+- Si non rempli, l'utilisateur ne peut utiliser l'application
+- correspond à l'index sur la table picture qui est la photo de profil
 
 ###### popularity:
 - plus les points sont élevé  plus populaire est le profil
@@ -189,3 +189,18 @@ on n'en supprime pas
 - unique, ne peut pas être en doublon
 - fautes d'orthographe toléré
 - ne peut être modifier ou supprimer par l'utilisateur
+
+----------
+
+### picture table
+
+###### id:
+- index de la photo auto increment max 5
+- si une est supprimer la future photo reprendra l'index manquant 
+
+###### user_id:
+- lié à users(id)
+- si users(id) est supprimé cela supprime les photos liés
+
+###### url:
+- url pour trouver la photo

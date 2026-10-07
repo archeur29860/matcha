@@ -92,4 +92,5 @@ def user(db_conf, nb_users):
 
     cursor.close()
     connection.close()
+    print(f"{nb_users} users are created")
     return user_ids

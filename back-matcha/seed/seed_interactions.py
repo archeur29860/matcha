@@ -6,7 +6,7 @@ from datetime import date, timedelta
 INTERACTION = [
     'Liked',
     'Viewed',
-    'Matched',
+    'Blocked',
 ]
 
 def generate_interaction(user_id, user):
@@ -59,3 +59,4 @@ def interactions(db_conf, user):
 
     cursor.close()
     connection.close()
+    print("interactions are created")

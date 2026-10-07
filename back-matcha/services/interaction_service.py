@@ -10,7 +10,7 @@ def create_interaction(from_uid, to_uid, typeof_inter):
     try:
         result = db.session.execute(
             text("""
-                INSERT INTO interaction
+                INSERT INTO interactions
                 (from_user_id, to_user_id, which_interaction)
                 VALUES (:from_uid, :to_uid, :typeof_inter)
                 RETURNING *
@@ -63,7 +63,7 @@ def get_all_interaction_from(user_id, limit=20, cursor=None):
     # Composition de la query
     query = """
         SELECT u.username, i.to_user_id, i.which_interaction, i.created_at
-        FROM interaction i
+        FROM interactions i
         JOIN users u
         ON i.to_user_id = u.id
         WHERE from_user_id = :user_id
@@ -122,7 +122,7 @@ def get_all_interaction_to(user_id, limit=20, cursor=None):
    # Composition de la query
     query = """
         SELECT u.username, i.from_user_id, i.which_interaction, i.created_at
-        FROM interaction i
+        FROM interactions i
         JOIN users u
         ON i.from_user_id = u.id
         WHERE to_user_id = :user_id

@@ -1,7 +1,7 @@
 --------------------- ENUM ---------------------
 
 CREATE TYPE gender_type AS ENUM ('Male', 'Female', 'Other');
-CREATE TYPE type_of_interaction AS ENUM ('Liked', 'Viewed', 'Matched');
+CREATE TYPE type_of_interaction AS ENUM ('Liked', 'Viewed', 'Blocked');
 
 
 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS pictures (
 );
 
 
---- interaction ---
+--- interactions ---
 CREATE TABLE IF NOT EXISTS interactions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   from_user_id UUID,

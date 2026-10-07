@@ -2,6 +2,7 @@ from seed_users import user
 from seed_profiles import profile
 from seed_pictures import pictures
 from seed_interactions import interactions
+from seed_matches import match
 # from seed_messages import message
 import os
 
@@ -23,9 +24,10 @@ NB = 500
 
 def main():
     users_id = user(DB_CONFIG, NB)
-    nb_picture = pictures(DB_CONFIG, users_id)
-    profiles = profile(DB_CONFIG, users_id, nb_picture)
-    interaction = interactions(DB_CONFIG, users_id)
+    nbs_picture = pictures(DB_CONFIG, users_id)
+    profiles = profile(DB_CONFIG, users_id, nbs_picture)
+    interactions(DB_CONFIG, users_id)
+    match(DB_CONFIG)
     # seed_messages(DB_CONFIG, interactions)
 
 

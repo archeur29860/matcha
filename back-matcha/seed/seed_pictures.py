@@ -46,4 +46,5 @@ def pictures(db_conf, user):
 
     cursor.close()
     connection.close()
+    print("picture table is feed")
     return nb_pic
