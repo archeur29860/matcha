@@ -64,13 +64,13 @@ def random_birth_date():
 def generate_profile(user_id):
     gender = random.choice(GENDERS)
 
-    if random.random() < 0.7:
+    if random.random() < 0.8:
         gender_pref = [random.choice(GENDERS)]
     else:
         gender_pref = ["Male", "Female"]
 
     tags = random.sample(
-        range(1, 70),
+        range(1, 71),
         random.randint(0, 5),
     )
 
@@ -81,53 +81,52 @@ def generate_profile(user_id):
         "gender_pref": gender_pref,
         "bio": random.choice(BIOS),
         "picture_profile_index": random.randint(0, 5),
-        "popularity": random.randint(0, 100),
+        "popularity": random.randint(0, 5),
         "localisation": random.choice(CITIES),
         "tags": tags,
     }
 
 
 
-def profile(user):
+def profile(db_conf, user):
 
-    connection = psycopg.connect(**DB_CONFIG)
+    connection = psycopg.connect(**db_conf)
 
     cursor = connection.cursor()
-    profile = generate_profile(user["id"])
 
-    cursor.execute(
-        """
-        INSERT INTO userProfile (
-            user_id,
-            age,
-            gender,
-            gender_pref,
-            bio,
-            picture_profile_index,
-            popularity,
-            localisation,
-            tags
-        )
-        VALUES (
-            %s, %s, %s, %s, %s,
-            %s, %s, %s, %s
-        )
-        """,
-        (
-            profile["user_id"],
-            profile["age"],
-            profile["gender"],
-            profile["gender_pref"],
-            profile["bio"],
-            profile["picture_profile_index"],
-            profile["popularity"],
-            profile["localisation"],
-            profile["tags"],
-        ),
-    )
+    for id in user:
+        profile = generate_profile(id)
 
-    if (i + 1) % 50 == 0:
-        print(f"{i + 1}/{NUMBER_OF_USERS} utilisateurs créés")
+        cursor.execute(
+            """
+            INSERT INTO userProfile (
+                user_id,
+                age,
+                gender,
+                gender_pref,
+                bio,
+                picture_profile_index,
+                popularity,
+                localisation,
+                tags
+            )
+            VALUES (
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s
+            )
+            """,
+            (
+                profile["user_id"],
+                profile["age"],
+                profile["gender"],
+                profile["gender_pref"],
+                profile["bio"],
+                profile["picture_profile_index"],
+                profile["popularity"],
+                profile["localisation"],
+                profile["tags"],
+            ),
+        )
 
     connection.commit()
 

@@ -3,11 +3,15 @@ import uuid
 from datetime import date, timedelta
 import psycopg
 from faker import Faker
+import numpy as np
 
 fake = Faker("fr_FR")
 
 def generate_password():
     return(fake.password(length=20))
+
+def generate_username():
+    return f"{fake.user_name()}_{random.randint(0,800)}"
 
 # --------------------------------------------------
 #                   GENERATE USER 
@@ -17,9 +21,10 @@ def generate_user():
     first_name = fake.first_name()
     last_name = fake.last_name()
 
-    username = fake.user_name()
+    username = generate_username()
 
     email = f"{first_name}.{last_name}@{fake.domain_word()}.{fake.uri_extension()}"
+    signaled = np.random.triangular(0, 0, 5)
 
     return {
         "id": uuid.uuid4(),
@@ -33,17 +38,17 @@ def generate_user():
             - timedelta(days=random.randint(0, 30))
         ),
         "is_online": random.choice([True, False]),
-        "signaled": random.randint(0, 5),
+        "signaled": signaled,
     }
 
 
 
-def user(db_conf,   nb_users):
+def user(db_conf, nb_users):
 
     connection = psycopg.connect(**db_conf)
 
     cursor = connection.cursor()
-
+    user_ids = []
     for _ in range(nb_users):
         user = generate_user()
 
@@ -81,8 +86,10 @@ def user(db_conf,   nb_users):
                 user["signaled"],
             ),
         )
+        user_ids.append(user["id"])
 
     connection.commit()
 
     cursor.close()
     connection.close()
+    return user_ids

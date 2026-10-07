@@ -167,4 +167,9 @@ header or footer:
 
 
 ## Reférence
-- [db diagram](https://dbdiagram.io): Pour la réflexion, création et représentation de la base de données.([code utilisé](./Ressources_README/db_diagram.txt))
+
+- DB:
+    - [db diagram](https://dbdiagram.io): Pour la réflexion, création et représentation de la base de données.([code utilisé](./Ressources_README/db_diagram.txt))
+
+- Faker : 
+    - https://faker.readthedocs.io/en/master/locales/ar_AA.html#faker.providers.internet.ar_AA.Provider.user_name

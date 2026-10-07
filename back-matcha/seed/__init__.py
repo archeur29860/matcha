@@ -18,16 +18,12 @@ DB_CONFIG = {
     "password": os.environ["DB_PASSWORD"],
 }
 
-NB = 5
+NB = 500
 
 def main():
-    user(DB_CONFIG, NB)
-
-    # profiles = seed_profiles(DB_CONFIG, users)
-# 
-# 
+    users_id = user(DB_CONFIG, NB)
+    profile(DB_CONFIG, users_id)
     # interactions = seed_interactions(DB_CONFIG, users)
-# 
     # seed_messages(DB_CONFIG, interactions)
 
 
