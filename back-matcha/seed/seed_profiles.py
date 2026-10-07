@@ -61,7 +61,7 @@ def random_birth_date():
 #                Generate profile user
 # --------------------------------------------------
 
-def generate_profile(user_id):
+def generate_profile(user_id, nb_pic):
     gender = random.choice(GENDERS)
 
     if random.random() < 0.8:
@@ -74,13 +74,15 @@ def generate_profile(user_id):
         random.randint(0, 5),
     )
 
+    picture_profile = random.randint(0, nb_pic - 1) if nb_pic > 0 else None
+
     return {
         "user_id": user_id,
         "age": random_birth_date(),
         "gender": gender,
         "gender_pref": gender_pref,
         "bio": random.choice(BIOS),
-        "picture_profile_index": random.randint(0, 5),
+        "picture_profile_index": picture_profile,
         "popularity": random.randint(0, 5),
         "localisation": random.choice(CITIES),
         "tags": tags,
@@ -88,14 +90,14 @@ def generate_profile(user_id):
 
 
 
-def profile(db_conf, user):
+def profile(db_conf, user, nb_picture):
 
     connection = psycopg.connect(**db_conf)
 
     cursor = connection.cursor()
 
-    for id in user:
-        profile = generate_profile(id)
+    for id, nb_pic in zip(user, nb_picture):
+        profile = generate_profile(id, nb_pic)
 
         cursor.execute(
             """

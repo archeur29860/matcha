@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS pictures (
 
 
 --- interaction ---
-CREATE TABLE IF NOT EXISTS interaction (
+CREATE TABLE IF NOT EXISTS interactions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   from_user_id UUID,
   to_user_id UUID,
