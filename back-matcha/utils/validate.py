@@ -17,14 +17,23 @@ def validate_uuid(value, field_name):
         )
 
 def validate_len_string(value, field_name, limit):
-    try:
-        if(len(value) > limit):
-            return value
-    except (ValueError, TypeError, AttributeError):
-        raise ValidationError(
-            f"{field_name} must be less than {limit}",
-            {
-                "field": field_name,
-                "value": value
-            }
-        )
+    if(len(value) < limit):
+        return value
+    raise ValidationError(
+        f"{field_name} must be less than {limit}",
+        {
+            "field": field_name,
+            "value": value
+        }
+    )
+
+def validate_enum(value, field_name, enum_value):
+    if value in enum_value:
+        return value
+    raise ValidationError(
+        f"{field_name} must be in {enum_value}",
+        {
+            "field": field_name,
+            "value": value
+        }
+    )

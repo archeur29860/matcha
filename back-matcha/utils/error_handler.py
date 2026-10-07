@@ -1,4 +1,6 @@
 from flask import Flask
+from werkzeug.exceptions import HTTPException
+
 from utils.exceptions import AppError
 from utils.response import error
 
@@ -12,6 +14,14 @@ def register_error_handlers(app):
             e.message,
             e.status_code,
             e.details
+        )
+
+    @app.errorhandler(HTTPException)
+    def handle_http_error(e):
+        return error(
+            e.name.upper().replace(" ", "_"),
+            e.description,
+            e.code
         )
 
     @app.errorhandler(Exception)

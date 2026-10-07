@@ -22,12 +22,39 @@ def insert_relation(user_id, user_id_blocked):
         db.session.commit()
         return dict(relation)
 
-    except IntegrityError:
+    except IntegrityError as e:
         db.session.rollback()
 
+        constraint = getattr(e.orig.diag, "constraint_name", None)
+
+        # 1. Relation déjà existante
+        if constraint == "unique_block_relation":
+            raise AppError(
+                code="BLOCK_ALREADY_EXISTS",
+                message="This block relation already exists",
+                status_code=409
+            )
+
+        # 2. user_id n'existe pas
+        if constraint == "fk_user":
+            raise AppError(
+                code="USER_NOT_FOUND",
+                message="The user does not exist",
+                status_code=404
+            )
+
+        # 3. user_id_blocked n'existe pas
+        if constraint == "fk_user_blocked":
+            raise AppError(
+                code="BLOCKED_USER_NOT_FOUND",
+                message="The user you are trying to block does not exist",
+                status_code=404
+            )
+
+        # 4. IntegrityError non prévu
         raise AppError(
-            code="BLOCK_ALREADY_EXISTS",
-            message="This block relation already exists",
+            code="INTEGRITY_ERROR",
+            message="The block relation could not be created",
             status_code=409
         )
 
@@ -100,7 +127,7 @@ def get_all_blocked_user(user_id):
                 "last_name": row["last_name"],
                 "first_name": row["first_name"]
             }
-            for row in result.mappings().all()
+            for row in relations
         ]
 
     except Exception:

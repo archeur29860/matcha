@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 --- Profiles ---
 CREATE TABLE IF NOT EXISTS userProfile(
-  user_id UUID,
+  user_id UUID UNIQUE,
   age DATE,
   gender gender_type DEFAULT 'Other',
   gender_pref gender_type[] DEFAULT '{Male, Female}',
@@ -98,7 +98,10 @@ CREATE TABLE IF NOT EXISTS matches (
   CONSTRAINT fk_high_user
     FOREIGN KEY (user_high_id)
     REFERENCES users(id)
-    ON DELETE CASCADE
+    ON DELETE CASCADE, 
+  
+  CONSTRAINT unique_match_relation
+    UNIQUE (user_low_id, user_high_id)
 );
 
 
@@ -131,7 +134,10 @@ CREATE TABLE IF NOT EXISTS blocked (
   CONSTRAINT fk_user_blocked
     FOREIGN KEY (user_id_blocked)
     REFERENCES users(id)
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
+  
+  CONSTRAINT unique_block_relation
+    UNIQUE (user_id, user_id_blocked)
 );
 
 
