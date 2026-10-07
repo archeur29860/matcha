@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 --- Profiles ---
 CREATE TABLE IF NOT EXISTS userProfile(
-  user_id UUID,
+  user_id UUID UNIQUE,
   age DATE,
   gender gender_type DEFAULT 'Other',
   gender_pref gender_type[] DEFAULT '{Male, Female}',
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS matches (
     REFERENCES users(id)
     ON DELETE CASCADE, 
   
-  CONSTRAINT unique_block_relation
+  CONSTRAINT unique_match_relation
     UNIQUE (user_low_id, user_high_id)
 );
 

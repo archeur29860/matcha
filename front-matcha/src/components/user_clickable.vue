@@ -10,6 +10,7 @@ const emit = defineEmits<{
 
 function handleClick() {
     emit('user-click', props.user_id)
+    console.log('emit:', props.user_id)
 }
 </script>
 
