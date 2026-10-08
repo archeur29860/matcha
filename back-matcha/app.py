@@ -1,4 +1,5 @@
 import os
+<<<<<<< HEAD
 from database import db
 from utils.error_handler import register_error_handlers
 from flask_jwt_extended import JWTManager
@@ -14,41 +15,78 @@ DATABASE_URL = (
     f"postgresql+psycopg://{DB_USER}:{DB_PASSWORD}"
     f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
+=======
+>>>>>>> master
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-# from routes.exemple_bp import exemple_bp
+from utils.error_handler import register_error_handlers
+from database.connection import close_db
+
 from routes.tags_bp import tags_bp
 from routes.blocked_bp import blocked_bp
 from routes.users_bp import users_bp
 from routes.interaction_bp import interaction_bp
 from routes.authenticate_bp import auth_bp
 
+
 app = Flask(__name__)
 
-CORS(app, origins=["http://localhost:5174"])
 
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+
+CORS(
+    app,
+    origins=["http://localhost:5174"],
+)
+
+
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 
 db.init_app(app)
 jwt = JWTManager(app)
+# ---------------------------------------------------------------------------
+# Database
+# ---------------------------------------------------------------------------
 
-# Enregistre le groupe de routes
-# app.register_blueprint(exemple_bp)
+app.teardown_appcontext(close_db)
+
+# ---------------------------------------------------------------------------
+# Blueprints
+# ---------------------------------------------------------------------------
+
 app.register_blueprint(tags_bp)
 app.register_blueprint(blocked_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(interaction_bp)
 app.register_blueprint(auth_bp)
+
+
+# ---------------------------------------------------------------------------
+# Error handlers
+# ---------------------------------------------------------------------------
+
 register_error_handlers(app)
+
+
+# ---------------------------------------------------------------------------
+# Health check
+# ---------------------------------------------------------------------------
 
 @app.route("/api/health")
 def health():
     return {"status": "ok"}
 
 
+# ---------------------------------------------------------------------------
+# Development server
+# ---------------------------------------------------------------------------
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+    )

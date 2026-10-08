@@ -2,7 +2,6 @@
 import SideBarNavigation from '@/components/sideBarNavigation.vue'
 import type { ProfileCard as ProfileCardType } from '@/types/profile'
 import ProfileCard from '@/components/profileCard.vue'
-import AppLayout from '@/components/appLayout.vue'
 import ListProfileCard from '@/components/listProfileCard.vue'
 import ProfileViewer from './ProfileViewer.vue'
 import { ref } from 'vue'
@@ -11,7 +10,7 @@ import Input from '@/components/input.vue'
 
 const profiles: ProfileCardType[] = [
   {
-    user_id: 1,
+    user_id: '1',
     username: 'alex_dev',
     age: 27,
     location: 'Paris, France',
@@ -22,7 +21,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=12'
   },
   {
-    user_id: 2,
+    user_id: '2',
     username: 'sophie_design',
     age: 25,
     location: 'Lyon, France',
@@ -33,7 +32,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=47'
   },
   {
-    user_id: 3,
+    user_id: '3',
     username: 'thomas_music',
     age: 30,
     location: 'Bordeaux, France',
@@ -44,7 +43,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=11'
   },
   {
-    user_id: 4,
+    user_id: '4',
     username: 'emma_travel',
     age: 24,
     location: 'Marseille, France',
@@ -55,7 +54,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=44'
   },
   {
-    user_id: 5,
+    user_id: '5',
     username: 'lucas_fit',
     age: 29,
     location: 'Toulouse, France',
@@ -66,7 +65,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=13'
   },
   {
-    user_id: 6,
+    user_id: '6',
     username: 'clara_books',
     age: 26,
     location: 'Nantes, France',
@@ -77,7 +76,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=32'
   },
   {
-    user_id: 7,
+    user_id: '7',
     username: 'antoine_food',
     age: 31,
     location: 'Lille, France',
@@ -88,7 +87,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=14'
   },
   {
-    user_id: 8,
+    user_id: '8',
     username: 'lea_art',
     age: 23,
     location: 'Nice, France',
@@ -99,7 +98,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=45'
   },
   {
-    user_id: 9,
+    user_id: '9',
     username: 'max_gamer',
     age: 28,
     location: 'Strasbourg, France',
@@ -110,7 +109,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=15'
   },
   {
-    user_id: 10,
+    user_id: '10',
     username: 'chloe_photo',
     age: 27,
     location: 'Montpellier, France',
@@ -121,7 +120,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=49'
   },
   {
-    user_id: 11,
+    user_id: '11',
     username: 'julien_coffee',
     age: 32,
     location: 'Paris, France',
@@ -132,7 +131,7 @@ const profiles: ProfileCardType[] = [
     image: 'https://i.pravatar.cc/300?img=3'
   },
   {
-    user_id: 12,
+    user_id: '12',
     username: 'camille_yoga',
     age: 26,
     location: 'Rennes, France',
@@ -145,7 +144,7 @@ const profiles: ProfileCardType[] = [
 ]
 
 const profile = ref({
-  user_id: 1,
+  user_id: '1',
   username: 'alex_dev',
   first_name: 'Alex',
   last_name: 'Martin',
@@ -204,7 +203,6 @@ const password = ref('');
 </script>
 
 <template>
-    <AppLayout>
         <!-- <ListProfileCard :profiles="profiles"/> -->
 
         <!-- <ProfileViewer
@@ -232,7 +230,6 @@ const password = ref('');
         type="password"
         placeholder="Mot de passe"
         />
-    </AppLayout>
 </template>
 
 <style scoped>

@@ -1,131 +1,152 @@
-from sqlalchemy import text
-from sqlalchemy.exc import IntegrityError
-from database import db
+from psycopg.errors import IntegrityError
 
+from database.connection import get_db
 from utils.exceptions import AppError, NotFoundError
-import traceback
 
-def insert_relation(user_id, user_id_blocked):
+
+def insert_relation(
+    user_id: int,
+    user_id_blocked: int,
+) -> dict:
+    db = get_db()
 
     try:
-        result = db.session.execute(
-            text("""
-                INSERT INTO blocked (user_id, user_id_blocked)
-                VALUES (:user_id, :user_id_blocked)
-                RETURNING user_id, user_id_blocked
-                """),
-            {"user_id": user_id,
-            "user_id_blocked": user_id_blocked
-            })
+        with db.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO blocked (
+                    user_id,
+                    user_id_blocked
+                )
+                VALUES (%s, %s)
+                RETURNING
+                    user_id,
+                    user_id_blocked
+                """,
+                (
+                    user_id,
+                    user_id_blocked,
+                ),
+            )
 
-        relation = result.mappings().one()
-        db.session.commit()
-        return dict(relation)
+            relation = cursor.fetchone()
+
+        db.commit()
+
+        return relation
 
     except IntegrityError as e:
-        db.session.rollback()
+        db.rollback()
 
-        constraint = getattr(e.orig.diag, "constraint_name", None)
+        constraint = e.diag.constraint_name
 
-        # 1. Relation déjà existante
+        # Relation déjà existante
         if constraint == "unique_block_relation":
             raise AppError(
                 code="BLOCK_ALREADY_EXISTS",
                 message="This block relation already exists",
-                status_code=409
+                status_code=409,
             )
 
-        # 2. user_id n'existe pas
+        # L'utilisateur qui bloque n'existe pas
         if constraint == "fk_user":
             raise AppError(
                 code="USER_NOT_FOUND",
                 message="The user does not exist",
-                status_code=404
+                status_code=404,
             )
 
-        # 3. user_id_blocked n'existe pas
+        # L'utilisateur bloqué n'existe pas
         if constraint == "fk_user_blocked":
             raise AppError(
                 code="BLOCKED_USER_NOT_FOUND",
                 message="The user you are trying to block does not exist",
-                status_code=404
+                status_code=404,
             )
 
-        # 4. IntegrityError non prévu
+        # IntegrityError non prévu
         raise AppError(
             code="INTEGRITY_ERROR",
             message="The block relation could not be created",
-            status_code=409
+            status_code=409,
         )
 
     except Exception:
-        db.session.rollback()
+        db.rollback()
         raise
 
-def delete_relation(user_id, user_id_blocked):
+
+def delete_relation(
+    user_id: int,
+    user_id_blocked: int,
+) -> dict | None:
+    db = get_db()
+
     try:
-        result = db.session.execute(
-            text("""
+        with db.cursor() as cursor:
+            cursor.execute(
+                """
                 DELETE FROM blocked
-                WHERE user_id = :user_id
-                AND user_id_blocked = :user_id_blocked
-                RETURNING user_id, user_id_blocked
-            """),
-            {
-                "user_id": user_id,
-                "user_id_blocked": user_id_blocked
-            }
-        )
+                WHERE user_id = %s
+                AND user_id_blocked = %s
+                RETURNING
+                    user_id,
+                    user_id_blocked
+                """,
+                (
+                    user_id,
+                    user_id_blocked,
+                ),
+            )
 
-        relation = result.mappings().first()
+            relation = cursor.fetchone()
 
+        # Aucune relation trouvée
         if relation is None:
-            db.session.rollback()
+            db.rollback()
             return None
 
-        db.session.commit()
+        db.commit()
 
-        return dict(relation)
-    
-    except IntegrityError:
-        db.session.rollback()
-
-        raise AppError(
-            code="BLOCK_ALREADY_EXISTS",
-            message="This block relation already exists",
-            status_code=409
-        )
+        return relation
 
     except Exception:
-        db.session.rollback()
+        db.rollback()
         raise
 
-def get_all_blocked_user(user_id):
+
+def get_all_blocked_user(
+    user_id: int,
+) -> list[dict]:
+    db = get_db()
+
     try:
-        result = db.session.execute(
-            text("""
-            SELECT u.id, u.username, u.last_name, u.first_name
-            FROM blocked b
-            JOIN users u
-            ON b.user_id_blocked = u.id
-            WHERE b.user_id = :user_id
-            """),
-            {
-                "user_id" : user_id
-            }
-        )
+        with db.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    u.id,
+                    u.username,
+                    u.last_name,
+                    u.first_name
+                FROM blocked b
+                JOIN users u
+                    ON b.user_id_blocked = u.id
+                WHERE b.user_id = %s
+                """,
+                (user_id,),
+            )
 
-        relations = result.mappings().all()
+            relations = cursor.fetchall()
 
-        if relations is None:
-            db.session.rollback()
+        if not relations:
             raise NotFoundError
 
         return [
             {
                 "username": row["username"],
                 "last_name": row["last_name"],
-                "first_name": row["first_name"]
+                "first_name": row["first_name"],
             }
             for row in relations
         ]

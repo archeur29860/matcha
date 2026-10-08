@@ -1,5 +1,4 @@
 from flask import Blueprint, request
-from models.tags_m import Tags
 import services.tags_service as s
 from utils.exceptions import ValidationError
 from utils.response import success

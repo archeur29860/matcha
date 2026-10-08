@@ -1,44 +1,64 @@
-from sqlalchemy import text
-from sqlalchemy.exc import IntegrityError
-from database import db
+from psycopg.errors import IntegrityError
 
-def insert_tag(new_label):
+from database.connection import get_db
+from utils.exceptions import ConflictError
 
-    try :
-        result = db.session.execute(
-            text("INSERT INTO tags (label) VALUES (:n_label)\
-            RETURNING id, label"),
-            {"n_label": new_label}
-        )
 
-        tag = result.mappings().one()
+def insert_tag(new_label: str) -> dict:
+    db = get_db()
 
-        db.session.commit()
+    try:
+        with db.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO tags (
+                    label
+                )
+                VALUES (%s)
+                RETURNING
+                    id,
+                    label
+                """,
+                (new_label,),
+            )
 
-        return dict(tag)
+            tag = cursor.fetchone()
+
+        db.commit()
+
+        return tag
 
     except IntegrityError:
-        db.session.rollback()
+        db.rollback()
+
         raise ConflictError(
             "Resource already exists"
         )
 
     except Exception:
-        db.session.rollback()
+        db.rollback()
         raise
 
 
-def get_all_tags():
-    try :
-        result = db.session.execute(
-            text("SELECT * FROM tags \
-            ORDER BY label ASC")
-        )
+def get_all_tags() -> list[dict]:
+    db = get_db()
 
-        tags = result.mappings().all()
+    try:
+        with db.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    label
+                FROM tags
+                ORDER BY label ASC
+                """
+            )
 
-        return [dict(tag) for tag in tags]
+            tags = cursor.fetchall()
+
+        return tags
 
     except Exception:
-        db.session.rollback()
+        db.rollback()
         raise
