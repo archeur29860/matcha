@@ -127,15 +127,14 @@ Si un champs n'est pas rempli, l'user ne pas utiliser des fonctions de l'applica
 
 ###### id:
 - id du match 
+- id du chat
+- unique
 
 ###### user_low_id:
 - id de l'user qui est l'id la plus basse
 
 ###### user_high_id:
 - id de l'user qui est l'id la plus haute
-
-###### chat_id:
-- référence de la conversation
 
 ###### created_at:
 - date et heure quand le match a eu lieu

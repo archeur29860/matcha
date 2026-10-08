@@ -80,10 +80,9 @@ CREATE TABLE IF NOT EXISTS interactions (
 
 ---- MATCHES ---- 
 CREATE TABLE IF NOT EXISTS matches (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID DEFAULT gen_random_uuid() UNIQUE,
   user_low_id UUID,
   user_high_id UUID,
-  chat_id UUID DEFAULT gen_random_uuid() UNIQUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   --- PK ---
@@ -116,7 +115,7 @@ CREATE TABLE IF NOT EXISTS chat (
   --- Constraint --- 
   CONSTRAINT fk_chat_id
     FOREIGN KEY (id) 
-    REFERENCES matches(chat_id) 
+    REFERENCES matches(id) 
     ON DELETE CASCADE
 );
 
