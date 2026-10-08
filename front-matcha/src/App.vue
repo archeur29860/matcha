@@ -3,7 +3,11 @@
 
 
 <template>
-  <RouterView />
+  <div class="router">
+    <main>
+      <RouterView />
+    </main>
+  </div>
 </template>
 
 <style scoped></style>

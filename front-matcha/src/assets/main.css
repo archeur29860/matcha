@@ -1,0 +1,5 @@
+/* src/assets/main.css */
+@import url('https://fonts.googleapis.com/css2?family=Capriola&display=swap');
+body {
+  font-family: "Capriola", sans-serif;
+}
