@@ -15,7 +15,7 @@ def generate_pict(user_id, i):
     return{
         "index": i,
         "user_id": user_id,
-        "url": f"PICTURES_DIR{picture}",
+        "url": f"{PICTURES_DIR}/{picture}",
     }
 
 

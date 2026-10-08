@@ -1,12 +1,14 @@
 import os
 from database import db
 from utils.error_handler import register_error_handlers
+from flask_jwt_extended import JWTManager
 
 DB_HOST = os.environ["DB_HOST"]
 DB_PORT = os.environ["DB_PORT"]
 DB_NAME = os.environ["DB_NAME"]
 DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
+JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 
 DATABASE_URL = (
     f"postgresql+psycopg://{DB_USER}:{DB_PASSWORD}"
@@ -22,14 +24,17 @@ from routes.tags_bp import tags_bp
 from routes.blocked_bp import blocked_bp
 from routes.users_bp import users_bp
 from routes.interaction_bp import interaction_bp
+from routes.authenticate_bp import auth_bp
 
 app = Flask(__name__)
 
 CORS(app, origins=["http://localhost:5174"])
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 
 db.init_app(app)
+jwt = JWTManager(app)
 
 # Enregistre le groupe de routes
 # app.register_blueprint(exemple_bp)
@@ -37,6 +42,7 @@ app.register_blueprint(tags_bp)
 app.register_blueprint(blocked_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(interaction_bp)
+app.register_blueprint(auth_bp)
 register_error_handlers(app)
 
 @app.route("/api/health")

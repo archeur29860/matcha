@@ -4,3 +4,4 @@ psycopg[binary]
 flask-cors
 Faker==40.41.0
 numpy
+Flask-JWT-Extended
