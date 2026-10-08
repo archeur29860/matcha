@@ -4,7 +4,8 @@ services:
       context: ./back-matcha
       dockerfile: Dockerfile
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "5000:5000"
     environment:
@@ -13,10 +14,11 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      NB_FAKE_PROFILE: ${NB_FAKE_PROFILE}
     networks:
       - webapp-net
     container_name: matcha_app
-
+      
   db:
     build:
       context: ./postgreSQL
@@ -25,6 +27,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbuser -d matcha_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     ports:
       - "5432:5432"
     volumes:

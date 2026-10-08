@@ -20,15 +20,14 @@ DB_CONFIG = {
     "password": os.environ["DB_PASSWORD"],
 }
 
-NB = 500
-
 def main():
-    users_id = user(DB_CONFIG, NB)
+    nb_user = int(os.environ["NB_FAKE_PROFILE"])
+    users_id = user(DB_CONFIG, nb_user)
     nbs_picture = pictures(DB_CONFIG, users_id)
-    profiles = profile(DB_CONFIG, users_id, nbs_picture)
+    profile(DB_CONFIG, users_id, nbs_picture)
     interactions(DB_CONFIG, users_id)
     match(DB_CONFIG)
-    # seed_messages(DB_CONFIG, interactions)
+    # seed_messages(DB_CONFIG)
 
 
 if __name__ == "__main__":
