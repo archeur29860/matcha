@@ -6,6 +6,7 @@ import DemoTestInteraction from '@/vues/demos/demoTestInteraction.vue'
 import DemoTestBlocked from '@/vues/demos/demoTestBlocked.vue'
 import AppLayout from '@/vues/navigation/appLayout.vue'
 import HomePage from '@/vues/navigation/HomePage.vue'
+import LoginPage from '@/vues/auth/LoginPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,6 +54,11 @@ const router = createRouter({
         },
       ]
     },
+    {
+      path: '/login',
+      name: 'login-page',
+      component: LoginPage
+    }
   ],
 })
 

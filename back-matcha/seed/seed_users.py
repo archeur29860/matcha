@@ -23,7 +23,7 @@ def generate_user():
 
     username = generate_username()
 
-    email = f"{first_name}.{last_name}@{fake.domain_word()}.{fake.uri_extension()}"
+    email = f"{first_name}.{last_name}@{fake.domain_word()}{fake.uri_extension()}"
     signaled = np.random.triangular(0, 0, 5)
 
     return {
