@@ -5,3 +5,4 @@ Faker==40.41.0
 numpy==2.5.3
 Flask-JWT-Extended
 Werkzeug==3.1.9
+flask_cors
