@@ -27,7 +27,6 @@ function handleClick() {
 </template>
 
 <style scoped>
-/* ["#ccd5ae","#e9edc9","#fefae0","#faedcd","#d4a373"] */
 .user-clickable {
     display: inline-flex;
     align-items: center;
