@@ -1,5 +1,4 @@
 from flask import Blueprint, request
-from models.users_m import Users
 import services.users_service as u
 from utils.validate import validate_len_string, validate_uuid
 from utils.response import success
