@@ -104,7 +104,7 @@ def delete_relation(
         # Aucune relation trouvée
         if relation is None:
             db.rollback()
-            return None
+            raise NotFoundError
 
         db.commit()
 
