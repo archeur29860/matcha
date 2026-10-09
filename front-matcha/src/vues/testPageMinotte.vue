@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { ref } from 'vue';
 
 
@@ -133,4 +133,31 @@ async function clicked_modify() {
         <button @click=clicked()>send</button>
         <button @click=clicked_modify()>modify</button>     const data = await response.json();
 
+</template> -->
+
+<script setup lang="ts">
+
+import { ref, onMounted } from "vue";
+import { get_current_user } from "@/services/api_connected";
+
+const user = ref<unknown>(null);
+const error = ref("");
+
+onMounted(async () => {
+    try {
+        user.value = await get_current_user();
+    } catch (err: unknown) {
+        error.value = err instanceof Error
+            ? err.message
+            : "Une erreur est survenue";
+    }
+});
+</script>
+
+<template>
+    <div>
+        <p v-if="error">{{ error }}</p>
+        <pre v-else-if="user">{{ user }}</pre>
+        <p v-else>Chargement...</p>
+    </div>
 </template>

@@ -1,6 +1,6 @@
 const URLAPI = "auth"
 
-export async function login(email:string, password:string, JWT: string){
+export async function login(email:string, password:string){
         const response = await fetch(`http://localhost:5000/api/${URLAPI}/`,{
         method: 'POST',
         headers: {

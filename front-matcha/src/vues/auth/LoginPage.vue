@@ -7,7 +7,6 @@ import { useUserStore } from '@/stores/user';
 
 
 const userStore = useUserStore();
-const email = ref('')
 const password = ref('')
 const notificationRef =
     ref<InstanceType<typeof Notification> | null>(null)
@@ -28,11 +27,13 @@ async function handleclick() {
         userStore.id = String(result1.user.id)
         userStore.email = result1.user.email
         userStore.jwt = result1.access_token
-
+        userStore.username = result1.user.username
+        userStore.first_name = result1.user.first_name
+        userStore.last_name = result1.user.last_name
         
         // Persistance
         localStorage.setItem('token', result1.access_token)
-        console.log(email.value, password.value)
+        console.log("Réponse API :", result1)
 
         notificationRef.value?.make_notification(result)
     }

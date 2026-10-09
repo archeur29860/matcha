@@ -11,6 +11,7 @@ from routes.blocked_bp import blocked_bp
 from routes.users_bp import users_bp
 from routes.interaction_bp import interaction_bp
 from routes.authenticate_bp import auth_bp
+from routes.connected_bp import connected_bp
 
 JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 
@@ -45,6 +46,7 @@ app.register_blueprint(blocked_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(interaction_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(connected_bp)
 
 
 # ---------------------------------------------------------------------------
