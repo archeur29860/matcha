@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import ReportModal from '@/components/modal/reportModal.vue';
+import { useUserStore } from '@/stores/user';
+import { useUserProfileStore } from '@/stores/userProfile';
+
+const userStore = useUserStore()
+const userProfileStore = useUserProfileStore()
 
 const props = defineProps<{
   user_id: string
@@ -29,11 +34,11 @@ const mainPicture = computed(() => {
 })
 
 function handleLike() {
-  emit('like', props.user_id)
+  // emit('like', props.user_id)
 }
 
 function handleUnlike() {
-  emit('unlike', props.user_id)
+  // emit('unlike', props.user_id)
 }
 
 type ReportReason = 'fake_account' | 'scam' | 'problematic'
@@ -52,8 +57,9 @@ function handleReportSubmit(reason: ReportReason) {
 
   // Appel API ici
 }
+
 function handleBlocked() {
-  emit('block', props.user_id)
+  // emit('block', props.user_id)
 }
 </script>
 
@@ -68,7 +74,7 @@ function handleBlocked() {
       >
         <img
           :src="mainPicture"
-          :alt="`Photo de ${first_name} ${last_name}`"
+          :alt="`Photo de ${userStore.first_name} ${userStore.last_name}`"
         />
       </div>
 
@@ -93,7 +99,7 @@ function handleBlocked() {
         >
           <img
             :src="picture"
-            :alt="`Photo ${index + 2} de ${first_name} ${last_name}`"
+            :alt="`Photo ${index + 2} de ${userStore.first_name} ${userStore.last_name}`"
           />
         </div>
       </div>
@@ -104,22 +110,22 @@ function handleBlocked() {
       <header class="profile-viewer__header">
         <div>
           <h1>
-            {{ first_name }} {{ last_name }}
+            {{ userStore.first_name }} {{ userStore.last_name }}
           </h1>
 
           <p class="profile-viewer__username">
-            @{{ username }}
+            @{{ userStore.username }}
           </p>
         </div>
 
         <span class="profile-viewer__age">
-          {{ age }} ans
+          {{ userStore.age }} ans
         </span>
       </header>
 
       <div class="profile-viewer__location">
         <span>📍</span>
-        <span>{{ location }}</span>
+        <span>{{ userStore.location }}</span>
       </div>
 
       <!-- Actions -->

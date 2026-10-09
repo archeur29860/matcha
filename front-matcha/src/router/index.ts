@@ -6,6 +6,7 @@ import DemoTestInteraction from '@/vues/demos/demoTestInteraction.vue'
 import DemoTestBlocked from '@/vues/demos/demoTestBlocked.vue'
 import AppLayout from '@/vues/navigation/appLayout.vue'
 import HomePage from '@/vues/navigation/HomePage.vue'
+import ProfileViewer from '@/vues/navigation/ProfileViewer.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,11 @@ const router = createRouter({
           path: 'home',
           name: 'home-page',
           component: HomePage
+        },
+        {
+          path: 'profile',
+          name: 'my-profile',
+          component: ProfileViewer
         },
       ]
     },
