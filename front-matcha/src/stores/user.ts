@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 export const useUserStore = defineStore('user', () => {
     const id = ref("")
@@ -8,8 +8,26 @@ export const useUserStore = defineStore('user', () => {
     const first_name = ref("")
     const last_name = ref("")
     const age = ref(0)
+    const jwt = ref(localStorage.getItem("token") || "");
+
+    const isAuthenticated = computed(() => !!jwt.value);
+
+    function logout() {
+        id.value = "";
+        email.value = "";
+        username.value = "";
+        first_name.value = "";
+        last_name.value = "";
+        age.value = 0;
+
+        jwt.value = "";
+        localStorage.removeItem("token");
+    }
 
     return {
-        id, email, username, first_name, last_name, age
+        id, email, username, first_name, last_name, age, jwt, isAuthenticated, logout
+    }
+    {
+        persist: true
     }
 })
