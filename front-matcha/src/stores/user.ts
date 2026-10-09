@@ -1,7 +1,10 @@
+
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useUserStore = defineStore('user', () => {
+export const useUserStore = defineStore(
+  'user',
+  () => {
     const id = ref("")
     const email = ref("")
     const username = ref("")
@@ -10,6 +13,15 @@ export const useUserStore = defineStore('user', () => {
     const age = ref(0)
 
     return {
-        id, email, username, first_name, last_name, age
+      id,
+      email,
+      username,
+      first_name,
+      last_name,
+      age
     }
-})
+  },
+  {
+    persist: true
+  }
+)
