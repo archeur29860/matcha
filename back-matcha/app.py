@@ -10,6 +10,7 @@ from routes.tags_bp import tags_bp
 from routes.blocked_bp import blocked_bp
 from routes.users_bp import users_bp
 from routes.interaction_bp import interaction_bp
+from routes.userProfile_bp import userProfile_bp
 
 
 app = Flask(__name__)
@@ -40,6 +41,7 @@ app.register_blueprint(tags_bp)
 app.register_blueprint(blocked_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(interaction_bp)
+app.register_blueprint(userProfile_bp)
 
 
 # ---------------------------------------------------------------------------

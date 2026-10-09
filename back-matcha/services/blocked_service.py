@@ -5,8 +5,8 @@ from utils.exceptions import AppError, NotFoundError
 
 
 def insert_relation(
-    user_id: int,
-    user_id_blocked: int,
+    user_id: str,
+    user_id_blocked: str,
 ) -> dict:
     db = get_db()
 
@@ -77,8 +77,8 @@ def insert_relation(
 
 
 def delete_relation(
-    user_id: int,
-    user_id_blocked: int,
+    user_id: str,
+    user_id_blocked: str,
 ) -> dict | None:
     db = get_db()
 
@@ -116,7 +116,7 @@ def delete_relation(
 
 
 def get_all_blocked_user(
-    user_id: int,
+    user_id: str,
 ) -> list[dict]:
     db = get_db()
 

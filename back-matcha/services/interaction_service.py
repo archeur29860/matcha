@@ -5,8 +5,8 @@ from utils.exceptions import AppError
 
 
 def create_interaction(
-    from_uid: int,
-    to_uid: int,
+    from_uid: str,
+    to_uid: str,
     typeof_inter: str,
 ) -> dict:
     db = get_db()
@@ -74,7 +74,7 @@ def create_interaction(
 
 
 def get_all_interaction_from(
-    user_id: int,
+    user_id: str,
     limit: int = 20,
     cursor: dict | None = None,
 ) -> tuple[list[dict], dict | None]:
@@ -147,7 +147,7 @@ def get_all_interaction_from(
 
 
 def get_all_interaction_to(
-    user_id: int,
+    user_id: str,
     limit: int = 20,
     cursor: dict | None = None,
 ) -> tuple[list[dict], dict | None]:
