@@ -51,3 +51,17 @@ export async function get_list_interaction_to(user_id:string, limit:number = 20,
 
     return data;
 }
+
+export async function isLiked(from_user:string, to_user:string) {
+    const full_url = `http://localhost:5000/api/${URLAPI}/${from_user}/${to_user}/`;
+    const response = await fetch(full_url);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        console.error("Erreur HTTP:", response.status, data.error);
+        return;
+    }
+
+    return data;
+}

@@ -217,3 +217,19 @@ def get_all_interaction_to(
 
     except Exception:
         raise
+    
+def check_like_between(from_u, to_u):
+    try :
+        with db.cursor() as cursor_db:
+            cursor_db.execute(
+                """SELECT count(*) FROM interactions
+                WHERE %s=from_user_id AND %s=to_user_id AND %s=which_interaction
+            """, (from_u, to_u, "Liked"))
+            isliked = cursor_db.fetchone()
+            
+            if isLiked:
+                return True
+            return False
+    except Execption:
+        raise
+        

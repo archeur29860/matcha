@@ -33,7 +33,7 @@ const popularityClass = computed(() => {
     <!-- Image -->
     <div class="profile-card__image-wrapper">
       <img
-        :src="profile.image"
+        :src="'http://localhost:5000/api/pictures/' + profile.image"
         :alt="`Photo de ${profile.username}`"
         class="profile-card__image"
       />

@@ -12,9 +12,13 @@ interface Picture {
 }
 
 export const useUserProfileStore = defineStore(
-  'user',
+  'userProfile',
   () => {
     const id = ref("")
+    const username = ref("")
+    const first_name = ref("")
+    const last_name = ref("")
+    const last_connection = ref<string | null>(null);
     const age = ref(0)
     const gender = ref("")
     const gender_pref = ref<string[]>([])
@@ -27,6 +31,10 @@ export const useUserProfileStore = defineStore(
 
     return {
         id,
+        username,
+        first_name,
+        last_name,
+        last_connection,
         age,
         gender,
         gender_pref,

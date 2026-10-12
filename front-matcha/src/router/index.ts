@@ -53,7 +53,7 @@ const router = createRouter({
           component: HomePage
         },
         {
-          path: 'profile',
+          path: 'profile/:user_id',
           name: 'my-profile',
           component: ProfileViewer
         },

@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import SideBarNavigation from '@/components/sideBarNavigation.vue'
-import { useUserStore } from '@/stores/user';
-
-const userStore = useUserStore()
-
-
 </script>
 
 <template>
