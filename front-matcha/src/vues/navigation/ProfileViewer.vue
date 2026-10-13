@@ -66,18 +66,22 @@ onMounted(async () => {
 })
 
 const mainPicture = computed(() => {
-  	const pictures = userProfileStore.pictures ?? []
-	console.log( pictures.filter(
-		picture => picture.id == userProfileStore.picture_profile_index
-		))
-	return null
+  const pictures = userProfileStore.pictures ?? []
+	const mainpic = pictures.filter(
+		picture => picture.index == userProfileStore.picture_profile_index
+  )
+  console.info("mainpic", mainpic)
+  if (mainpic[0]) {
+    return mainpic[0].url
+  }
+  return null
 })
 
 const secondaryPictures = computed(() => {
   const pictures = userProfileStore.pictures ?? []
 
   return pictures.filter(
-    picture => picture.id !== userProfileStore.picture_profile_index
+    picture => picture.index !== userProfileStore.picture_profile_index
   )
 })
 

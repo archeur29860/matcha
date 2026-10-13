@@ -43,7 +43,7 @@ export const useUserProfileStore = defineStore(
         popularity,
         location,
         tags,
-        pictures
+        pictures,
     }
 },
 {

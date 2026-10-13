@@ -96,10 +96,10 @@ const popularityClass = computed(() => {
       <div class="profile-card__tags">
         <span
           v-for="tag in profile.tags"
-          :key="tag"
+          :key="tag.id"
           class="profile-card__tag"
         >
-          {{ tag }}
+          {{ tag.label }}
         </span>
       </div>
 

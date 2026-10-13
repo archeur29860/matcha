@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 export interface SearchOption {
-  id: number | string
+  id: string
   label: string
   subtitle?: string
   image?: string

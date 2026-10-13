@@ -122,6 +122,7 @@ def get_list_profile_by_id(user_id, limit=20, cursor=None):
         if has_more and profiles
         else None
     )
+    print(f"{len(profiles)} profils")
     return {
         "profiles": profiles,
         "next_cursor": next_cursor,

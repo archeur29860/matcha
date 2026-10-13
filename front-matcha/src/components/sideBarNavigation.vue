@@ -7,6 +7,8 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const activeItem = ref('')
 
+const userStore = useUserStore()
+
 onMounted(() => {
   if (route.path === '/home') {
     activeItem.value = 'discover'
@@ -16,12 +18,10 @@ onMounted(() => {
     activeItem.value = 'matches'
   } else if (route.path === '/') {
     activeItem.value = 'messages'
-  } else if (route.path === '/profile') {
+  } else if (route.path === `/profile/${userStore.id}`) {
     activeItem.value = 'profile'
   }
 })
-
-const userStore = useUserStore()
 
 const navigation = [
   {
@@ -55,7 +55,7 @@ const navigation = [
     id: 'profile',
     label: 'Mon profil',
     icon: '♙',
-    path: '/profile'
+    path: `/profile/${userStore.id}/`
   }
 ]
 
