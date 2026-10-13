@@ -34,7 +34,7 @@ const navigation = [
     id: 'likes',
     label: 'Likes',
     icon: '♡',
-    path: '/',
+    path: '/like',
     badge: 8
   },
   {

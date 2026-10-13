@@ -68,7 +68,7 @@ onMounted(async () => {
 const mainPicture = computed(() => {
   const pictures = userProfileStore.pictures ?? []
 	const mainpic = pictures.filter(
-		picture => picture.index == userProfileStore.picture_profile_index
+		picture => picture.id == userProfileStore.picture_profile_index
   )
   console.info("mainpic", mainpic)
   if (mainpic[0]) {
@@ -81,7 +81,7 @@ const secondaryPictures = computed(() => {
   const pictures = userProfileStore.pictures ?? []
 
   return pictures.filter(
-    picture => picture.index !== userProfileStore.picture_profile_index
+    picture => picture.id !== userProfileStore.picture_profile_index
   )
 })
 

@@ -7,6 +7,7 @@ import DemoTestBlocked from '@/vues/demos/demoTestBlocked.vue'
 import AppLayout from '@/vues/navigation/appLayout.vue'
 import HomePage from '@/vues/navigation/HomePage.vue'
 import ProfileViewer from '@/vues/navigation/ProfileViewer.vue'
+import LikeHistory from '@/vues/LikeHistory.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +57,11 @@ const router = createRouter({
           path: 'profile/:user_id',
           name: 'my-profile',
           component: ProfileViewer
+        },
+        {
+          path: 'like',
+          name: 'like',
+          component: LikeHistory
         },
       ]
     },

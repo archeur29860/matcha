@@ -37,7 +37,7 @@ def get_user_profile_by_id_with_pictures(user_id:str) -> dict:
                     (
                         SELECT ARRAY_AGG(
                             JSON_BUILD_OBJECT(
-                                'index', p.index,
+                                'id', p.index,
                                 'url', p.url
                                 )
                             )

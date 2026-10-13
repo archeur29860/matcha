@@ -19,7 +19,7 @@ def generate_pict(user_id, i):
 
     picture = random.choice(items)
     return {
-        "index": i,
+        "id": i,
         "user_id": user_id,
         "url": f"{picture}",
     }
@@ -46,7 +46,7 @@ def pictures(db_conf, user):
                 )
                 """,
                 (
-                    picture["index"],
+                    picture["id"],
                     picture["user_id"],
                     picture["url"],
                 ),
