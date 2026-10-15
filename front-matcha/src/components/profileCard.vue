@@ -33,7 +33,7 @@ const popularityClass = computed(() => {
     <!-- Image -->
     <div class="profile-card__image-wrapper">
       <img
-        :src="profile.image"
+        :src="'http://localhost:5000/api/pictures/' + profile.image"
         :alt="`Photo de ${profile.username}`"
         class="profile-card__image"
       />
@@ -96,10 +96,10 @@ const popularityClass = computed(() => {
       <div class="profile-card__tags">
         <span
           v-for="tag in profile.tags"
-          :key="tag"
+          :key="tag.id"
           class="profile-card__tag"
         >
-          {{ tag }}
+          {{ tag.label }}
         </span>
       </div>
 

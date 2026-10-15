@@ -5,8 +5,8 @@ from utils.exceptions import AppError
 
 
 def create_interaction(
-    from_uid: int,
-    to_uid: int,
+    from_uid: str,
+    to_uid: str,
     typeof_inter: str,
 ) -> dict:
     db = get_db()
@@ -74,7 +74,7 @@ def create_interaction(
 
 
 def get_all_interaction_from(
-    user_id: int,
+    user_id: str,
     limit: int = 20,
     cursor: dict | None = None,
 ) -> tuple[list[dict], dict | None]:
@@ -147,9 +147,11 @@ def get_all_interaction_from(
 
 
 def get_all_interaction_to(
-    user_id: int,
+    user_id: str,
     limit: int = 20,
     cursor: dict | None = None,
+    typeof_inter: str | None = None,
+    
 ) -> tuple[list[dict], dict | None]:
     db = get_db()
 
@@ -167,6 +169,12 @@ def get_all_interaction_to(
     """
 
     params: list = [user_id]
+
+    if typeof_inter:
+        query += """
+            AND i.which_interaction = %s
+        """
+        params.append(typeof_inter)
 
     if cursor:
         query += """
@@ -217,3 +225,19 @@ def get_all_interaction_to(
 
     except Exception:
         raise
+    
+def check_like_between(from_u, to_u):
+    try :
+        with db.cursor() as cursor_db:
+            cursor_db.execute(
+                """SELECT count(*) FROM interactions
+                WHERE %s=from_user_id AND %s=to_user_id AND %s=which_interaction
+            """, (from_u, to_u, "Liked"))
+            isliked = cursor_db.fetchone()
+            
+            if isLiked:
+                return True
+            return False
+    except Execption:
+        raise
+        

@@ -72,11 +72,13 @@ def get_all_interaction_to_user_id(user_id):
 
     limit = request.args.get("limit", default=20, type=int)
     cursor = request.args.get("cursor")
+    typeof_inter = request.args.get("typeof_inter")
 
     interactions_list, next_cursor = s.get_all_interaction_to(
         user_id,
         limit,
-        cursor
+        cursor,
+        typeof_inter
         )
 
     return success({
@@ -86,3 +88,13 @@ def get_all_interaction_to_user_id(user_id):
             "has_more": next_cursor is not None
         } 
     })
+
+@interaction_bp.route("/<uuid:from_user_id>/<uuid:to_user_id>/", methods=["GET"])
+def isLiked(from_user_id, to_user_id):
+    
+    from_user_id = validate_uuid(from_user_id, "from_user_id")
+    to_user_id = validate_uuid(to_user_id, "to_user_id")
+    
+    isliked = s.check_like_between(from_user_id, to_user_id)
+    
+    return success(isLiked)

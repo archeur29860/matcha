@@ -8,16 +8,21 @@ PICTURES_DIR = BASE_DIR / "pictures"
 
 
 def generate_pict(user_id, i):
-    items = os.listdir(PICTURES_DIR)
-    nb_items = len(items)
-    picture = items[random.randint(0, nb_items - 1)]
+    items = [
+        item.name
+        for item in PICTURES_DIR.iterdir()
+        if item.is_file()
+    ]
 
-    return{
-        "index": i,
+    if not items:
+        raise ValueError(f"Aucune photo trouvée dans {PICTURES_DIR}")
+
+    picture = random.choice(items)
+    return {
+        "id": i,
         "user_id": user_id,
-        "url": f"{PICTURES_DIR}/{picture}",
+        "url": f"{picture}",
     }
-
 
 def pictures(db_conf, user):
 
@@ -41,7 +46,7 @@ def pictures(db_conf, user):
                 )
                 """,
                 (
-                    picture["index"],
+                    picture["id"],
                     picture["user_id"],
                     picture["url"],
                 ),

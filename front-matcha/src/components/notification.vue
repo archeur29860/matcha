@@ -36,6 +36,8 @@ interface Props {
     duration?: number
     
     position?: NotificationPosition
+
+    mobile_position?: NotificationPosition | 'top-left'
     
     closable?: boolean
     

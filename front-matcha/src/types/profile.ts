@@ -4,8 +4,13 @@ export interface ProfileCard {
   age: number
   location: string
   online: boolean
-  tags: string[]
+  tags: Tag[]
   bio: string
   image: string
   popularity: number
+}
+
+export interface Tag {
+  id: string
+  label: string
 }

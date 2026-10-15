@@ -1,41 +1,67 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import router from '@/router'
+import { useRoute } from 'vue-router'
 
-const activeItem = ref('discover')
+const route = useRoute()
+const activeItem = ref('')
+
+const userStore = useUserStore()
+
+onMounted(() => {
+  if (route.path === '/home') {
+    activeItem.value = 'discover'
+  } else if (route.path === '/') {
+    activeItem.value = 'history'
+  } else if (route.path === '/') {
+    activeItem.value = 'matches'
+  } else if (route.path === '/') {
+    activeItem.value = 'messages'
+  } else if (route.path === `/profile/${userStore.id}`) {
+    activeItem.value = 'profile'
+  }
+})
 
 const navigation = [
   {
     id: 'discover',
     label: 'Découvrir',
-    icon: '⌂'
+    icon: '⌂',
+    path: '/home'
   },
   {
-    id: 'likes',
-    label: 'Likes',
+    id: 'history',
+    label: 'History',
     icon: '♡',
+    path: '/interaction_history',
     badge: 8
   },
   {
     id: 'matches',
     label: 'Matchs',
     icon: '♥',
+    path: '/',
     badge: 3
   },
   {
     id: 'messages',
     label: 'Messages',
     icon: '◌',
+    path: '/',
     badge: 5
   },
   {
     id: 'profile',
     label: 'Mon profil',
-    icon: '♙'
+    icon: '♙',
+    path: `/profile/${userStore.id}/`
   }
 ]
 
-const selectItem = (id:string) => {
+const selectItem = (id:string, path:string) => {
   activeItem.value = id
+  router.push(path)
 }
 </script>
 
@@ -66,7 +92,7 @@ const selectItem = (id:string) => {
         type="button"
         class="nav-item"
         :class="{ active: activeItem === item.id }"
-        @click="selectItem(item.id)"
+        @click="selectItem(item.id, item.path)"
       >
         <span class="nav-icon">
           {{ item.icon }}
@@ -90,11 +116,11 @@ const selectItem = (id:string) => {
     <div class="user-card">
 
       <div class="avatar">
-        A
+        {{ userStore.first_name[0] }}
       </div>
 
       <div class="user-info">
-        <strong>Alexandre</strong>
+        <strong>{{ userStore.first_name }} {{ userStore.last_name }}</strong>
 
         <span>
           <i class="online-dot"></i>

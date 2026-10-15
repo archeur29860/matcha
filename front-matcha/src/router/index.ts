@@ -6,6 +6,8 @@ import DemoTestInteraction from '@/vues/demos/demoTestInteraction.vue'
 import DemoTestBlocked from '@/vues/demos/demoTestBlocked.vue'
 import AppLayout from '@/vues/navigation/appLayout.vue'
 import HomePage from '@/vues/navigation/HomePage.vue'
+import ProfileViewer from '@/vues/navigation/ProfileViewer.vue'
+import InteractionHistory from '@/vues/InteractionHistory.vue'
 import LoginPage from '@/vues/auth/LoginPage.vue'
 
 const router = createRouter({
@@ -51,6 +53,16 @@ const router = createRouter({
           path: 'home',
           name: 'home-page',
           component: HomePage
+        },
+        {
+          path: 'profile/:user_id',
+          name: 'my-profile',
+          component: ProfileViewer
+        },
+        {
+          path: 'interaction_history',
+          name: 'interaction-history',
+          component: InteractionHistory
         },
       ]
     },

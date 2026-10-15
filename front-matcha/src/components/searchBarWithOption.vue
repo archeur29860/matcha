@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 export interface SearchOption {
-  id: number | string
+  id: string
   label: string
   subtitle?: string
   image?: string
@@ -10,10 +10,11 @@ export interface SearchOption {
 
 const props = withDefaults(
   defineProps<{
-    options: SearchOption[]
+    options?: SearchOption[]
     placeholder?: string
   }>(),
   {
+    options: () => [],
     placeholder: 'Rechercher...',
   }
 )
@@ -32,11 +33,11 @@ const filteredOptions = computed(() => {
     return []
   }
 
-  return props.options
+  return (props.options ?? [])
     .filter((option) => {
       return (
         option.label.toLowerCase().includes(query) ||
-        option.subtitle?.toLowerCase().includes(query)
+        (option.subtitle?.toLowerCase().includes(query) ?? false)
       )
     })
     .slice(0, 8)
@@ -123,7 +124,7 @@ function handleBlur() {
             class="search-bar__option-image"
           >
             <img
-              :src="option.image"
+              :src="'http://localhost:5000/api/pictures/' + option.image"
               :alt="option.label"
             />
           </div>
