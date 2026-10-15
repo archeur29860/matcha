@@ -150,6 +150,8 @@ def get_all_interaction_to(
     user_id: str,
     limit: int = 20,
     cursor: dict | None = None,
+    typeof_inter: str | None = None,
+    
 ) -> tuple[list[dict], dict | None]:
     db = get_db()
 
@@ -167,6 +169,12 @@ def get_all_interaction_to(
     """
 
     params: list = [user_id]
+
+    if typeof_inter:
+        query += """
+            AND i.which_interaction = %s
+        """
+        params.append(typeof_inter)
 
     if cursor:
         query += """

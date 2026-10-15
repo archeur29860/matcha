@@ -13,7 +13,7 @@ onMounted(() => {
   if (route.path === '/home') {
     activeItem.value = 'discover'
   } else if (route.path === '/') {
-    activeItem.value = 'likes'
+    activeItem.value = 'history'
   } else if (route.path === '/') {
     activeItem.value = 'matches'
   } else if (route.path === '/') {
@@ -31,10 +31,10 @@ const navigation = [
     path: '/home'
   },
   {
-    id: 'likes',
-    label: 'Likes',
+    id: 'history',
+    label: 'History',
     icon: '♡',
-    path: '/like',
+    path: '/interaction_history',
     badge: 8
   },
   {

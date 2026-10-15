@@ -26,7 +26,7 @@ onMounted(async () => {
   try {
     const result = await get_userProfile(String(route.params.user_id))
 
-    console.log('Réponse API :', result)
+    // console.log('Réponse API :', result)
     notificationRef.value?.make_notification(result)
 
     if (!result.success || !result.data) {
@@ -56,7 +56,7 @@ onMounted(async () => {
     userProfileStore.tags = data.tags ?? []
     userProfileStore.pictures = data.pictures ?? []
 
-    console.log('Photos récupérées :', userProfileStore.pictures)
+    // console.log('Photos récupérées :', userProfileStore.pictures)
   } catch (error) {
     console.error('Erreur de récupération du profil :', error)
     loadError.value = 'Une erreur est survenue lors du chargement du profil.'
@@ -70,7 +70,7 @@ const mainPicture = computed(() => {
 	const mainpic = pictures.filter(
 		picture => picture.id == userProfileStore.picture_profile_index
   )
-  console.info("mainpic", mainpic)
+  // console.log("mainpic", mainpic)
   if (mainpic[0]) {
     return mainpic[0].url
   }
@@ -116,13 +116,13 @@ function handleReport() {
 
 function handleReportSubmit(reason: ReportReason) {
   showReportModal.value = false
-  console.log('Utilisateur signalé :', userProfileStore.id)
-  console.log('Raison :', reason)
+  // console.log('Utilisateur signalé :', userProfileStore.id)
+  // console.log('Raison :', reason)
   // Ajouter ici l'appel API de signalement.
 }
 
 function handleBlocked() {
-  console.log('Utilisateur bloqué :', userProfileStore.id)
+  // console.log('Utilisateur bloqué :', userProfileStore.id)
   // Ajouter ici l'appel API de blocage.
 }
 </script>

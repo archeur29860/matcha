@@ -1,4 +1,16 @@
+import type { Interaction } from "@/types/interaction";
+
 const URLAPI = 'interaction'
+
+function mapInteractionType(data: any[]): Interaction[] {
+    return data.map((row): Interaction => ({
+        id: String(row.id),
+        username: row.username,
+        user_id: String(row.from_user_id),
+        typeOfInter: row.which_interaction,
+        created_at: row.created_at,
+    }))
+}
 
 export async function new_iteraction(from_user:string, to_user:string, typeof_inter:string) {
 
@@ -35,11 +47,11 @@ export async function get_list_interaction_from(user_id:string, limit:number = 2
         return;
     }
 
-    return data;
+    return mapInteractionType(data.data.items);
 }
 
-export async function get_list_interaction_to(user_id:string, limit:number = 20, cursor:string = "") {
-    const full_url = `http://localhost:5000/api/${URLAPI}/to/${user_id}/?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}`;
+export async function get_list_interaction_to(user_id:string, limit:number = 20, cursor:string = "", typeof_inter:string = "") {
+    const full_url = `http://localhost:5000/api/${URLAPI}/to/${user_id}/?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}${typeof_inter ? `&typeof_inter=${typeof_inter}` : ""}`;
     const response = await fetch(full_url);
 
     const data = await response.json();
@@ -49,7 +61,7 @@ export async function get_list_interaction_to(user_id:string, limit:number = 20,
         return;
     }
 
-    return data;
+    return mapInteractionType(data.data.items);
 }
 
 export async function isLiked(from_user:string, to_user:string) {

@@ -20,7 +20,7 @@ const loading = ref(true)
 
 onMounted( async () => {
   const result = await get_userProfile_list(userStore.id)
-  console.log("result:", result)
+  // console.log("result:", result)
   profiles.value = result.data.profiles
   hasMore.value = result.data.has_more
   next_cursor.value = result.data.next_cursor
@@ -42,7 +42,7 @@ function handleProfileSelected(option: {
   subtitle?: string
   image?: string
 }) {
-  console.log('Profil sélectionné :', option.id)
+  // console.log('Profil sélectionné :', option.id)
 
   // Par exemple :
   userProfileStore.id = option.id
@@ -51,12 +51,12 @@ function handleProfileSelected(option: {
 
 
 function handleLike(user_id: string) {
-  console.log('Liked', user_id)
+  // console.log('Liked', user_id)
 }
 
 
 function handleClickOnProfile(user_id: string) {
-  console.log('Click on profile', user_id)
+  // console.log('Click on profile', user_id)
   router.push(`/profile/${user_id}/`)
   
 }
@@ -74,7 +74,7 @@ async function loadMoreProfiles() {
       20,
       next_cursor.value
     )
-    console.log(result)
+    // console.log(result)
 
     if (!result.success) return
 
@@ -92,7 +92,7 @@ async function loadMoreProfiles() {
     loading.value = false
   }
 
-  console.log("profiles", profiles)
+  // console.log("profiles", profiles)
 }
 
 </script>

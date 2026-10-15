@@ -72,11 +72,13 @@ def get_all_interaction_to_user_id(user_id):
 
     limit = request.args.get("limit", default=20, type=int)
     cursor = request.args.get("cursor")
+    typeof_inter = request.args.get("typeof_inter")
 
     interactions_list, next_cursor = s.get_all_interaction_to(
         user_id,
         limit,
-        cursor
+        cursor,
+        typeof_inter
         )
 
     return success({
