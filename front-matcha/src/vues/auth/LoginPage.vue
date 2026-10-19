@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import Input from '@/components/input.vue';
 import { login } from '@/services/api_authenticate';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Notification from '@/components/notification.vue'
 import { useUserStore } from '@/stores/user';
 
-
 const userStore = useUserStore();
-const password = ref('')
-const notificationRef =
-    ref<InstanceType<typeof Notification> | null>(null)
+const password = ref('');
+const notificationRef = ref<InstanceType<typeof Notification> | null>(null);
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const isValidEmail = computed(() => emailRegex.test(userStore.email));
+
+const isFormValid = computed(() => {
+    return isValidEmail.value && password.value.trim() !== '';
+});
 
 async function handleclick() {
-    try{
+    if (!isFormValid.value) return;
+
+    try {
         const result = await login(userStore.email, password.value)
         const result1 = result.data ?? result
         if (!result1.user || !result1.access_token) {
@@ -47,19 +55,41 @@ async function handleclick() {
         })
     }
 }
-
-
 </script>
 
-
 <template>
-    <Input v-model="userStore.email" type="email" placeholder="exemple@domaine.com" />
+    <div :class="{ 'email-invalid': userStore.email && !isValidEmail }">
+        <Input 
+            v-model="userStore.email" 
+            type="email" 
+            placeholder="exemple@domaine.com" 
+        />
+    </div>
+
     <Input v-model="password" type="password" placeholder="password" />
-    <button v-if="!userStore.jwt" @click="handleclick">SUBMIT</button>
+    
+    <button 
+        v-if="!userStore.jwt" 
+        @click="handleclick" 
+        :disabled="!isFormValid"
+        :class="{ 'btn-disabled': !isFormValid }"
+    >
+        SUBMIT
+    </button>
     <button v-else @click="userStore.logout">logout</button>
+    
     <Notification
         ref="notificationRef"
         :show="false"
         position="bottom-left"
     />
 </template>
+
+<style scoped>
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #ccc;
+}
+</style>
