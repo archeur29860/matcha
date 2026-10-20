@@ -4,6 +4,7 @@ import { login } from '@/services/api_authenticate';
 import { ref, computed } from 'vue';
 import Notification from '@/components/notification.vue'
 import { useUserStore } from '@/stores/user';
+import { socket } from '@/services/socket';
 
 const userStore = useUserStore();
 const password = ref('');
@@ -39,9 +40,11 @@ async function handleclick() {
         userStore.first_name = result1.user.first_name
         userStore.last_name = result1.user.last_name
         
-        // Persistance
-        localStorage.setItem('token', result1.access_token)
-        console.log("Réponse API :", result1)
+        // Persistance and sicket
+        
+        localStorage.setItem('access_token', result1.access_token)
+        socket.connect();
+        // console.log("Réponse API :", result1)
 
         notificationRef.value?.make_notification(result)
     }

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
+import { socket } from "@/services/socket"
 
 export const useUserStore = defineStore(
     'user',
@@ -9,6 +10,7 @@ export const useUserStore = defineStore(
     const username = ref("")
     const first_name = ref("")
     const last_name = ref("")
+    const age = ref("")
     const jwt = ref(localStorage.getItem("token") || "");
 
     const isAuthenticated = computed(() => !!jwt.value);
@@ -23,6 +25,7 @@ export const useUserStore = defineStore(
         age.value = 0;
 
         jwt.value = "";
+        socket.disconnect();
         localStorage.removeItem("token");
     }
 
