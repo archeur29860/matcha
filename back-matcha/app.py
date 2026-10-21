@@ -48,6 +48,8 @@ socketio = SocketIO(
     app,
     cors_allowed_origins=[FRONTEND_ORIGIN],
     async_mode="threading",
+    logger=True,
+    engineio_logger=True,
 )
 
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
@@ -108,5 +110,7 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=5000,
         debug=True,
-        allow_unsafe_werkzeug=True
+        allow_unsafe_werkzeug=True,
+        use_reloader=False,
+        log_output=True,
     )

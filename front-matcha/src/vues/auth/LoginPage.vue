@@ -24,6 +24,8 @@ async function handleclick() {
     try {
         const result = await login(userStore.email, password.value)
         const result1 = result.data ?? result
+        console.log("Réponse login reçue :", !!result1.access_token);
+        console.log("Utilisateur reçu :", !!result1.user);
         if (!result1.user || !result1.access_token) {
             console.error('answerd format unknow :', result1)
             notificationRef.value?.make_notification({
@@ -42,7 +44,8 @@ async function handleclick() {
         
         // Persistance and sicket
         
-        localStorage.setItem('access_token', result1.access_token)
+        localStorage.setItem('token', result1.access_token)
+        userStore.jwt = result1.access_token;
         socket.connect();
         // console.log("Réponse API :", result1)
 
@@ -76,8 +79,7 @@ async function handleclick() {
         @click="handleclick" 
         :disabled="!isFormValid"
         :class="{ 'btn-disabled': !isFormValid }"
-    >
-        SUBMIT
+    >SUBMIT
     </button>
     <button v-else @click="userStore.logout">logout</button>
     

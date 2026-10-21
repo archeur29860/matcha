@@ -16,6 +16,7 @@ export const useUserStore = defineStore(
     const isAuthenticated = computed(() => !!jwt.value);
 
     function logout() {
+        socket.disconnect();
         id.value = "";
         email.value = "";
         
@@ -25,17 +26,18 @@ export const useUserStore = defineStore(
         age.value = 0;
 
         jwt.value = "";
-        socket.disconnect();
         localStorage.removeItem("token");
     }
-
     return {
       id,
       email,
       username,
       first_name,
       last_name,
-      age
+      age,
+      jwt,
+      isAuthenticated,
+      logout,
     }
     },
     {

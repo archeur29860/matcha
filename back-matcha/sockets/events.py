@@ -12,24 +12,29 @@ def register_socket_events(socketio):
         token = auth.get("token")
 
         if not isinstance(token, str) or not token:
+            print("[SOCKET] connexion error: missing token")
             return False
 
         try:
             payload = decode_token(token)
             user_id = payload.get("sub")
 
-            if not user_id:
+            if user_id is None:
+                print("[SOCKET] connexion error: missing user")
                 return False
+
+            user_id = str(user_id)
 
             join_room(f"user:{user_id}")
 
             print(f"WebSocket connected: user {user_id}")
             return True
 
-        except Exception:
+        except Exception as exc:
             # if the toke nis  unvalid or refused
+            print(f"[SOCKET] connexion error: unvalid token  {type(exc).__name__}")
             return False
 
     @socketio.on("disconnect")
     def handle_disconnect(reason=None):
-        print(f"WebSocket disconnect : {request.sid}")
+        print(f"WebSocket disconnect : {request.sid}, raison={reason}")
