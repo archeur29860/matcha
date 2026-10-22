@@ -33,7 +33,10 @@ def get_user_by_id(user_id):
     query = """
         SELECT
             id,
-            email
+            email,
+            username,
+            last_name,
+            first_name,
         FROM users
         WHERE id = %s
     """

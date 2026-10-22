@@ -3,12 +3,14 @@ from utils.exceptions import ValidationError
 from utils.validate import validate_uuid, validate_enum
 from utils.response import success
 import services.interaction_service as s
+from utils.decorators import profile_completed
 
 interaction_bp = Blueprint("interaction", __name__, url_prefix="/api/interaction")
 
 TYPEOF_INTER = ['Liked', 'Viewed', 'Matched']
 
 @interaction_bp.route("/", methods=["POST"])
+@profile_completed
 def create_interaction():
     data = request.get_json()
 
