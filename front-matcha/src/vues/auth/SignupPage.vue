@@ -1,94 +1,204 @@
-<script setup lang="ts">
-import Input from '@/components/input.vue';
-import { login } from '@/services/api_authenticate';
-import { ref, computed } from 'vue';
-import Notification from '@/components/notification.vue'
-import { useUserStore } from '@/stores/user';
-import { socket } from '@/services/socket';
 
-const userStore = useUserStore();
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import Input from '@/components/input.vue';
+
+const router = useRouter();
+
+const email = ref('');
 const password = ref('');
-const notificationRef = ref<InstanceType<typeof Notification> | null>(null);
+const username = ref('');
+const first_name = ref('');
+const last_name = ref('');
+const age = ref('');
+const gender = ref('Other');
+const gender_pref = ref<string[]>(['Male', 'Female']);
+const bio = ref('');
+const picture_profile_index = ref('');
+const localisation = ref('');
+const tags = ref('');
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const isValidEmail = computed(() => emailRegex.test(userStore.email));
+const isValidEmail = computed(() =>
+    emailRegex.test(email.value)
+);
 
-const isFormValid = computed(() => {
-    return isValidEmail.value && password.value.trim() !== '';
-});
-
-const username = ref('');
-const last_name = ref('');
-const first_name = ref('');
+const isFormValid = computed(() =>
+    isValidEmail.value &&
+    password.value.trim() !== '' &&
+    password.value.trim() == password1.value.trim() &&
+    username.value.trim() !== '' &&
+    first_name.value.trim() !== '' &&
+    last_name.value.trim() !== ''
+);
 
 async function handleclick() {
     if (!isFormValid.value) return;
 
     try {
-        const result = await login(userStore.email, password.value)
-        const result1 = result.data ?? result
-        console.log("Réponse login reçue :", !!result1.access_token);
-        console.log("Utilisateur reçu :", !!result1.user);
-        if (!result1.user || !result1.access_token) {
-            console.error('answerd format unknow :', result1)
-            notificationRef.value?.make_notification({
-                error: 'API response don\'t have token or user'
-            })
-            return
+        const response = await fetch(
+            'http://localhost:5000/api/users/',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email.value.trim(),
+                    username: username.value.trim(),
+                    first_name: first_name.value.trim(),
+                    last_name: last_name.value.trim(),
+                    password: password.value,
+                    age: age.value || null,
+                    gender: gender.value,
+                    gender_pref: gender_pref.value,
+                    bio: bio.value,
+                    picture_profile_index:
+                        picture_profile_index.value === ''
+                            ? null
+                            : Number(picture_profile_index.value),
+                    localisation: localisation.value || null,
+                    tags: tags.value
+                        .split(',')
+                        .map(tag => tag.trim())
+                        .filter(Boolean)
+                        .map(Number),
+                }),
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error('Erreur HTTP :', response.status, data);
+            return;
         }
 
-        // pinia store
-        userStore.id = String(result1.user.id)
-        userStore.email = result1.user.email
-        userStore.jwt = result1.access_token
-        userStore.username = result1.user.username
-        userStore.first_name = result1.user.first_name
-        userStore.last_name = result1.user.last_name
-        
-        // Persistance and sicket
-        
-        localStorage.setItem('token', result1.access_token)
-        userStore.jwt = result1.access_token;
-        socket.connect();
-        // console.log("Réponse API :", result1)
+        console.log('Utilisateur créé :', data);
 
-        notificationRef.value?.make_notification(result)
-    }
-    catch (error) {
-        console.error('Error :', error)
+        // Redirection vers la connexion
+        await router.push('/login');
 
-        notificationRef.value?.make_notification({
-            error: error instanceof Error
-                ? error.message
-                : 'Unknow error'
-        })
+    } catch (error: unknown) {
+        console.error('Erreur réseau :', error);
     }
 }
 </script>
 
 <template>
-    <div :class="{ 'email-invalid': userStore.email && !isValidEmail }">
-        <Input 
-            v-model="userStore.email" 
-            type="email" 
-            placeholder="exemple@domaine.com" 
-        />
-    </div>
+    <form @submit.prevent="handleclick">
+        <div :class="{ 'email-invalid': email && !isValidEmail }">
+            <Input
+                v-model="email"
+                type="email"
+                placeholder="exemple@domaine.com"
+            />
+        </div>
 
-    <Input v-model="password" type="password" placeholder="password" />
-    <Input v-model="username" type="username" placeholder="username" />
-    <Input v-model="first_name" type="first_name" placeholder="first_name" />
-    <Input v-model="last_name" type="last_name" placeholder="last_name" />
-    <button 
-        v-if="!userStore.jwt" 
-        @click="handleclick" 
-        :disabled="!isFormValid"
-        :class="{ 'btn-disabled': !isFormValid }"
-    >Bonjour
-    </button>
-    <button 
-       @click="$router.push('login')"
-    >Already have account
-    </button>
+        <Input
+            v-model="password"
+            type="password"
+            placeholder="password"
+        />
+
+        <Input
+            v-model="password"
+            type="password"
+            placeholder="confirm password"
+        />
+
+        <Input
+            v-model="username"
+            type="text"
+            placeholder="username"
+        />
+
+        <Input
+            v-model="first_name"
+            type="text"
+            placeholder="Jonh"
+        />
+
+        <Input
+            v-model="last_name"
+            type="text"
+            placeholder="Doe"
+        />
+
+        <Input
+            v-model="age"
+            type="date"
+            placeholder="birthday"
+        />
+
+        <label for="gender">Genre</label>
+        <select id="gender" v-model="gender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="gender_pref">Genres preference</label>
+        <select id="gender_pref" v-model="gender_pref" multiple>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="bio">Bio</label>
+        <textarea id="bio" v-model="bio" placeholder="about you" />
+
+        <Input
+            v-model="picture_profile_index"
+            type="number"
+            placeholder="Index of the picture"
+        />
+
+        <Input
+            v-model="localisation"
+            type="text"
+            placeholder="Localisation"
+        />
+
+        <Input
+            v-model="tags"
+            type="text"
+            placeholder="Intest(1, 2, 3)"
+        />
+
+
+        <button
+            v-if="!profile_completed"
+            type="submit"
+            :disabled="!isFormValid"
+        >
+            Register
+        </button>
+
+        <button
+            v-else
+            type="button"
+            @click="modifyProfile"
+        >
+            Modify
+        </button>
+
+
+        <button type="button" @click="router.push('/login')">
+            Already have an account?
+        </button>
+    </form>
 </template>
+
+<style scoped>
+.email-invalid {
+    border: 1px solid red;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+</style>

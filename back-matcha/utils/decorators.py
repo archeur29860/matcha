@@ -12,7 +12,7 @@ def profile_completed(function):
 
         if not profile_is_complete(user_id):
             return jsonify({
-                "error": "imcomplet profile",
+                "error": "incomplet profile",
                 "message": "need to complete your profile."
             }), 403
 
