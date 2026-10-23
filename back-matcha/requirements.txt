@@ -8,3 +8,4 @@ Werkzeug==3.1.9
 flask_cors
 Flask-SocketIO
 simple-websocket
+Unidecode

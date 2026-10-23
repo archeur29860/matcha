@@ -10,7 +10,7 @@ export const useUserStore = defineStore(
     const username = ref("")
     const first_name = ref("")
     const last_name = ref("")
-    const age = ref("")
+    // const age = ref("")
     const jwt = ref(localStorage.getItem("token") || "");
 
     const isAuthenticated = computed(() => !!jwt.value);
@@ -23,7 +23,7 @@ export const useUserStore = defineStore(
         username.value = "";
         first_name.value = "";
         last_name.value = "";
-        age.value = 0;
+        // age.value = 0;
 
         jwt.value = "";
         localStorage.removeItem("token");
@@ -34,7 +34,7 @@ export const useUserStore = defineStore(
       username,
       first_name,
       last_name,
-      age,
+    //   age,
       jwt,
       isAuthenticated,
       logout,

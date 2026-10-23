@@ -5,7 +5,10 @@ import { ref, computed } from 'vue';
 import Notification from '@/components/notification.vue'
 import { useUserStore } from '@/stores/user';
 import { socket } from '@/services/socket';
+import { useRouter } from 'vue-router';
 
+
+const router = useRouter();
 const userStore = useUserStore();
 const password = ref('');
 const notificationRef = ref<InstanceType<typeof Notification> | null>(null);
@@ -50,6 +53,7 @@ async function handleclick() {
         // console.log("Réponse API :", result1)
 
         notificationRef.value?.make_notification(result)
+        await router.push('/home')
     }
     catch (error) {
         console.error('Error :', error)
@@ -79,15 +83,18 @@ async function handleclick() {
         @click="handleclick" 
         :disabled="!isFormValid"
         :class="{ 'btn-disabled': !isFormValid }"
-    >SUBMIT
+    >JOIN
     </button>
     <button v-else @click="userStore.logout">logout</button>
-    
     <Notification
         ref="notificationRef"
         :show="false"
         position="bottom-left"
     />
+    <button 
+       @click="$router.push('signup')"
+    > create account
+    </button>
 </template>
 
 <style scoped>

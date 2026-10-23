@@ -10,7 +10,7 @@ def profile_is_complete(user_id):
     user = s.get_user_by_id(user_id)
     profile = se.get_user_profile_by_id_with_pictures(user_id)
 
-    if not user and profile:
+    if not user or not profile:
         return False
 
     required_user_field = [
@@ -22,21 +22,23 @@ def profile_is_complete(user_id):
     required_profile_field = [
             "age",
             "gender",
-            "gender_ref",
+            "gender_pref",
             "bio",
             "picture_profile_index",
-            "localisation",
+            "location",
             "tags"
     ]
 
+
     for field in required_user_field:
-        value = field.value
+        value = user[field]
         if not value:
             return False
 
     for field in required_profile_field:
-        value = field.value
-        if not value:
+        value = profile[field]
+        # print(f"{field} : {value}")
+        if  value is None:
             return False
 
-    return True
+    return True     

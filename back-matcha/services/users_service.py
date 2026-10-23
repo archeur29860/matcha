@@ -2,6 +2,7 @@ from psycopg.errors import IntegrityError
 
 from database.connection import get_db
 from utils.exceptions import AppError
+from werkzeug.security import generate_password_hash
 
 
 def add_user(dict_info: dict) -> dict:
@@ -34,7 +35,7 @@ def add_user(dict_info: dict) -> dict:
                     dict_info["username"],
                     dict_info["last_name"],
                     dict_info["first_name"],
-                    dict_info["password"],
+                    generate_password_hash(dict_info["password"]),
                 ),
             )
 
@@ -82,7 +83,7 @@ def modify_user(dict_info: dict) -> dict:
                     dict_info["username"],
                     dict_info["last_name"],
                     dict_info["first_name"],
-                    dict_info["password"],
+                    generate_password_hash(dict_info["password"]),
                     dict_info["user_id"],
                 ),
             )

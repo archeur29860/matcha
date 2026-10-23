@@ -6,6 +6,7 @@ from faker import Faker
 import numpy as np
 import csv
 from werkzeug.security import generate_password_hash
+from unidecode import unidecode
 
 fake = Faker("fr_FR")
 
@@ -26,7 +27,9 @@ def generate_user():
 
     username = generate_username()
 
-    email = f"{first_name}.{last_name}@{fake.domain_word()}{fake.uri_extension()}"
+    mail = f"{first_name}.{last_name}@{fake.domain_word()}{fake.uri_extension()}"
+    email = unidecode(mail.strip())
+    email = email.lower()
     signaled = np.random.triangular(0, 0, 5)
     password= generate_password()
     pwd_hash= generate_password_hash(password)

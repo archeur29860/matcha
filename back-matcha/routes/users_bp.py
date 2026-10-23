@@ -3,6 +3,7 @@ import services.users_service as u
 from utils.validate import validate_len_string, validate_uuid
 from utils.response import success
 
+
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
 @users_bp.route("/", methods=["POST"])
