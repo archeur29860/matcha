@@ -15,15 +15,15 @@ def get_user_profile_by_id(user_id):
     userProfile = s.get_user_profile_by_id_with_pictures(user_id)
     
     
-    send_private_message(
-    socketio,
-    recipient_id=42,
-    message={
-        "id": 123,
-        "conversation_id": 10,
-        "sender_id": 7,
-        "text": "Bonjour !",
-    })
+    # send_private_message(
+    # socketio,
+    # recipient_id=42,
+    # message={
+    #     "id": 123,
+    #     "conversation_id": 10,
+    #     "sender_id": 7,
+    #     "text": "Bonjour !",
+    # })
     
     return success(userProfile)
 
