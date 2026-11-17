@@ -90,3 +90,100 @@ const model = defineModel<string>({ default: '' })
   }
 }
 </style>
+
+
+from flask import Blueprint, request
+import services.users_services as u
+
+from utils.validate import validate_len_string, validate_uuid
+from utils.response import success
+
+
+users_bp = Blueprint("users", __name__, url_prefix="/api/users")
+
+
+def validate_user_fields(data):
+    if not isinstance(data, dict):
+        return None, ({"error": "JSON body required"}, 400)
+
+    required_fields = [
+        "email",
+        "username",
+        "last_name",
+        "first_name",
+        "password"
+    ]
+
+    all_field_content = {}
+
+    for field in required_fields:
+        if field not in data:
+            return None, (
+                {"error": f"The field '{field}' is required"},
+                400
+            )
+
+        field_content = data[field]
+
+        if not isinstance(field_content, str):
+            return None, (
+                {"error": f"{field} must be a string"},
+                400
+            )
+
+        field_content = field_content.strip()
+
+        if not field_content:
+            return None, (
+                {"error": f"{field} cannot be empty"},
+                400
+            )
+
+        if field in ("email", "password"):
+            validate_len_string(field_content, field, 256)
+        else:
+            validate_len_string(field_content, field, 51)
+
+        all_field_content[field] = field_content
+
+    return all_field_content, None
+
+
+@users_bp.route("/", methods=["POST"])
+def create_user():
+
+    data = request.get_json(silent=True)
+
+    all_field_content, error = validate_user_fields(data)
+
+    if error:
+        return error
+
+    result = u.add_user(all_field_content)
+
+    return success(result, 201)
+
+
+@users_bp.route("/", methods=["PUT"])
+def modify_user():
+
+    data = request.get_json(silent=True)
+
+    all_field_content, error = validate_user_fields(data)
+
+    if error:
+        return error
+
+    if "user_id" not in data:
+        return {"error": "user_id is required"}, 400
+
+    all_field_content["user_id"] = validate_uuid(
+        data["user_id"], "id"
+    )
+
+    result = u.modify_user(all_field_content)
+
+    return success(result, 200)
+
+
+    

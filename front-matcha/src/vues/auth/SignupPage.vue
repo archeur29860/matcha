@@ -8,6 +8,7 @@ const router = useRouter();
 
 const email = ref('');
 const password = ref('');
+const password1 = ref('');
 const username = ref('');
 const first_name = ref('');
 const last_name = ref('');
@@ -21,6 +22,7 @@ const tags = ref('');
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+
 const isValidEmail = computed(() =>
     emailRegex.test(email.value)
 );
@@ -31,7 +33,14 @@ const isFormValid = computed(() =>
     password.value.trim() == password1.value.trim() &&
     username.value.trim() !== '' &&
     first_name.value.trim() !== '' &&
-    last_name.value.trim() !== ''
+    last_name.value.trim() !== '' &&
+    age.value.trim() !== '' &&
+    gender.value.trim() !== '' &&
+    gender_pref.value.length > 0 &&
+    bio.value.trim() !== '' &&
+    picture_profile_index.value.trim() !== '' &&
+    localisation.value.trim() !== '' &&
+    tags.value.trim() !== ''
 );
 
 async function handleclick() {
@@ -104,7 +113,7 @@ async function handleclick() {
         />
 
         <Input
-            v-model="password"
+            v-model="password1"
             type="password"
             placeholder="confirm password"
         />
@@ -148,8 +157,12 @@ async function handleclick() {
         </select>
 
         <label for="bio">Bio</label>
-        <textarea id="bio" v-model="bio" placeholder="about you" />
-
+        <textarea
+            id="bio"
+            v-model="bio"
+            placeholder="about you"
+        >
+        </textarea>
         <Input
             v-model="picture_profile_index"
             type="number"
@@ -165,7 +178,7 @@ async function handleclick() {
         <Input
             v-model="tags"
             type="text"
-            placeholder="Intest(1, 2, 3)"
+            placeholder="Interest(1, 2, 3)"
         />
 
 

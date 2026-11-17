@@ -20,13 +20,13 @@ def profile_is_complete(user_id):
         "first_name"
     ]
     required_profile_field = [
-            "age",
-            "gender",
-            "gender_pref",
-            "bio",
-            "picture_profile_index",
-            "location",
-            "tags"
+        "age",
+        "gender",
+        "gender_pref",
+        "bio",
+        "picture_profile_index",
+        "location",
+        "tags"
     ]
 
 

@@ -1,4 +1,4 @@
-from psycopg.errors import IntegrityError
+from psycopg.errors import UniqueViolation, ForeignKeyViolation
 
 from database.connection import get_db
 from utils.exceptions import AppError
