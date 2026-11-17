@@ -66,7 +66,7 @@ async function handleclick() {
                     bio: bio.value,
                     picture_profile_index:
                         picture_profile_index.value === ''
-                            ? null
+                            ? nullpicture_profile
                             : Number(picture_profile_index.value),
                     localisation: localisation.value || null,
                     tags: tags.value
