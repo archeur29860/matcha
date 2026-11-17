@@ -31,3 +31,5 @@ def authenticate_socket_user(auth):
     ou None si l'authentification échoue.
     """
     return None
+
+

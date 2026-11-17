@@ -29,10 +29,10 @@ def login():
     if not user:
         raise ValidationError("Invalid email or password")
 
-    # if not check_password_hash(user["password"], data["password"]):
-    #     raise ValidationError("Invalid email or password")
-    if user["password"] != data["password"] :
+    if not check_password_hash(user["password"], data["password"]):
         raise ValidationError("Invalid email or password")
+    # if user["password"] != data["password"] :
+    #     raise ValidationError("Invalid email or password")
 
     access_token = create_access_token(
         identity=str(user["id"])

@@ -17,4 +17,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    host: '0.0.0.0',   //access at Vite serv in the Docker
+    port: 5174,
+    strictPort: true, // avoid to restart in an other port
+  },
 })

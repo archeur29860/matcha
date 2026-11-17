@@ -1,4 +1,4 @@
-```vue
+<!-- ```vue -->
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import ReportModal from '@/components/modal/reportModal.vue'
@@ -709,4 +709,4 @@ function handleBlocked() {
   }
 }
 </style>
-```
+<!-- ``` -->

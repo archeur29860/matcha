@@ -9,6 +9,8 @@ import HomePage from '@/vues/navigation/HomePage.vue'
 import ProfileViewer from '@/vues/navigation/ProfileViewer.vue'
 import InteractionHistory from '@/vues/InteractionHistory.vue'
 import LoginPage from '@/vues/auth/LoginPage.vue'
+import SocketTest from '@/components/SocketTest.vue';
+import SignupPage from '@/vues/auth/SignupPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,6 +38,11 @@ const router = createRouter({
           path: 'blocked',
           name: 'blocked-demo',
           component: DemoTestBlocked,
+        },
+        {
+          path: '/socket-test',
+          name: 'SocketTest',
+          component: SocketTest,
         },
       ],
     },
@@ -70,6 +77,11 @@ const router = createRouter({
       path: '/login',
       name: 'login-page',
       component: LoginPage
+    },
+    {
+      path: '/signup',
+      name: 'signup-page',
+      component: SignupPage
     }
   ],
 })

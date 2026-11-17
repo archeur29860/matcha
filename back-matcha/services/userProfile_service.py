@@ -19,6 +19,7 @@ def get_user_profile_by_id_with_pictures(user_id:str) -> dict:
                     u.last_connection,
                     u.is_online,
                     up.age,
+                    up.localisation AS location,
                     up.gender,
                     up.gender_pref,
                     up.bio,
