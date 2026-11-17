@@ -83,7 +83,7 @@ def get_all_interaction_from(
     query = """
         SELECT
             u.username,
-            i.to_user_id,
+            i.to_user_id AS user_id,
             i.which_interaction,
             i.created_at,
             i.id
@@ -158,7 +158,7 @@ def get_all_interaction_to(
     query = """
         SELECT
             u.username,
-            i.from_user_id,
+            i.from_user_id AS user_id,
             i.which_interaction,
             i.created_at,
             i.id
@@ -227,19 +227,26 @@ def get_all_interaction_to(
         raise
     
 def check_like_between(from_u, to_u):
-    try :
+    try:
         db = get_db()
 
         with db.cursor() as cursor_db:
             cursor_db.execute(
-                """SELECT count(*) FROM interactions
-                WHERE %s=from_user_id AND %s=to_user_id AND %s=which_interaction
-            """, (from_u, to_u, "Liked"))
-            isliked = cursor_db.fetchone()
-            
-            if isliked:
-                return True
-            return False
-    except Execption:
+                """
+                SELECT which_interaction
+                FROM interactions
+                WHERE from_user_id = %s
+                  AND to_user_id = %s
+                  AND which_interaction IN ('Liked', 'Blocked', 'Reported', 'Unliked')
+                ORDER BY created_at DESC
+                LIMIT 1
+                """,
+                (from_u, to_u)
+            )
+
+            interaction = cursor_db.fetchone()
+
+            return interaction is not None and interaction[0] == 'Liked'
+
+    except Exception:
         raise
-        

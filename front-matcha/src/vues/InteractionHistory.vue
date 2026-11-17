@@ -2,20 +2,31 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import InteractionCard from '../components/interactionCard.vue'
-import { get_list_interaction_to } from '@/services/api_interaction.ts';
+import { get_list_interaction_to, get_list_interaction_from } from '@/services/api_interaction.ts';
 import { useUserStore } from '@/stores/user.ts';
 import type { Interaction } from '@/types/interaction.ts';
+import { handleClickOnProfile } from '@/composable/useNavigation.ts';
 
 const userStore = useUserStore()
 
-const likes = ref<Interaction[]>([])
+const inter_to_me = ref<Interaction[]>([])
+const inter_from_me = ref<Interaction[]>([])
 
 onMounted( async () => {
-    const result = await get_list_interaction_to(userStore.id)
+    const result_to = await get_list_interaction_to(userStore.id)
 
-    if (result){
-      likes.value = result
+    if (result_to){
+      inter_to_me.value = result_to
+      console.log("rto", result_to)
     }
+    
+    const result_from = await get_list_interaction_from(userStore.id)
+
+    if (result_to){
+      inter_from_me.value = result_from
+      console.log("rfrom", result_from)
+    }
+
 })
 
 </script>
@@ -28,11 +39,13 @@ onMounted( async () => {
       <h2>Interactions reçues</h2>
 
       <InteractionCard
-        v-for="interaction in likes"
+        v-for="interaction in inter_to_me"
         :key="interaction.id"
         :from_username="interaction.username"
+        :user_id="interaction.user_id"
         :type-of-inter="interaction.typeOfInter"
         :created_at="interaction.created_at"
+        @clickOnProfile="handleClickOnProfile"
       />
     </div>
 
@@ -41,11 +54,13 @@ onMounted( async () => {
       <h2>Interactions envoyées</h2>
 
       <InteractionCard
-        v-for="interaction in likes"
+        v-for="interaction in inter_from_me"
         :key="interaction.id"
-        :from_username="interaction.username"
+        :to_username="interaction.username"
+        :user_id="interaction.user_id"
         :type-of-inter="interaction.typeOfInter"
         :created_at="interaction.created_at"
+        @clickOnProfile="handleClickOnProfile"
       />
     </div>
   </div>

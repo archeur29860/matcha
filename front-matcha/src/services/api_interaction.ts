@@ -6,7 +6,7 @@ function mapInteractionType(data: any[]): Interaction[] {
     return data.map((row): Interaction => ({
         id: String(row.id),
         username: row.username,
-        user_id: String(row.from_user_id),
+        user_id: String(row.user_id),
         typeOfInter: row.which_interaction,
         created_at: row.created_at,
     }))

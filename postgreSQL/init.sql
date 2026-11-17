@@ -1,7 +1,7 @@
 --------------------- ENUM ---------------------
 
 CREATE TYPE gender_type AS ENUM ('Male', 'Female', 'Other');
-CREATE TYPE type_of_interaction AS ENUM ('Liked', 'Viewed', 'Blocked');
+CREATE TYPE type_of_interaction AS ENUM ('Liked', 'Viewed', 'Blocked', 'Reported', 'Unliked');
 
 
 
@@ -61,9 +61,9 @@ CREATE TABLE IF NOT EXISTS pictures (
 --- interactions ---
 CREATE TABLE IF NOT EXISTS interactions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  from_user_id UUID,
-  to_user_id UUID,
-  which_interaction type_of_interaction,
+  from_user_id UUID NOT NULL,
+  to_user_id UUID NOT NULL,
+  which_interaction type_of_interaction NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   --- Constraint ---
@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS interactions (
 ---- MATCHES ---- 
 CREATE TABLE IF NOT EXISTS matches (
   id UUID DEFAULT gen_random_uuid() UNIQUE,
-  user_low_id UUID,
-  user_high_id UUID,
+  user_low_id UUID NOT NULL,
+  user_high_id UUID NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   --- PK ---
@@ -106,8 +106,8 @@ CREATE TABLE IF NOT EXISTS matches (
 
 --- CHAT --- 
 CREATE TABLE IF NOT EXISTS chat (
-  id UUID,
-  from_user_id UUID,
+  id UUID NOT NULL,
+  from_user_id UUID NOT NULL,
   message VARCHAR,
   sended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   is_read BOOLEAN DEFAULT false,
@@ -121,8 +121,8 @@ CREATE TABLE IF NOT EXISTS chat (
 
 ---- BLOCKED -----
 CREATE TABLE IF NOT EXISTS blocked (
-  user_id UUID,
-  user_id_blocked UUID,
+  user_id UUID NOT NULL,
+  user_id_blocked UUID NOT NULL,
 
   --- Constraint ---
   CONSTRAINT fk_user

@@ -8,6 +8,7 @@ import { onMounted, ref, computed } from 'vue';
 import { get_userProfile_list } from '@/services/api_userProfile'
 import { useUserStore } from '@/stores/user';
 import { useUserProfileStore } from '@/stores/userProfile';
+import { handleClickOnProfile } from '@/composable/useNavigation';
 
 const profiles = ref<ProfileCardType[]>([])
 
@@ -53,14 +54,6 @@ function handleProfileSelected(option: {
 function handleLike(user_id: string) {
   // console.log('Liked', user_id)
 }
-
-
-function handleClickOnProfile(user_id: string) {
-  // console.log('Click on profile', user_id)
-  router.push(`/profile/${user_id}/`)
-  
-}
-
 
 async function loadMoreProfiles() {
   // Évite les appels simultanés ou inutiles.

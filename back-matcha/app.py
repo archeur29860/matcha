@@ -49,7 +49,7 @@ socketio = SocketIO(
     cors_allowed_origins=[FRONTEND_ORIGIN],
     async_mode="threading",
     logger=True,
-    engineio_logger=True,
+    engineio_logger=False,
 )
 
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY

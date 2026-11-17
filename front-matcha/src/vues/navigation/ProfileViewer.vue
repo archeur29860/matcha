@@ -7,8 +7,11 @@ import { useRoute } from 'vue-router'
 
 import { useUserProfileStore } from '@/stores/userProfile'
 import { get_userProfile } from '@/services/api_userProfile'
+import { new_iteraction } from '@/services/api_interaction'
+import { useUserStore } from '@/stores/user'
 
 const userProfileStore = useUserProfileStore()
+const userStore = useUserStore()
 
 const notificationRef = ref<InstanceType<typeof Notification> | null>(null)
 const liked = ref(false)
@@ -100,30 +103,43 @@ const formattedLastConnection = computed(() => {
   }).format(date)
 })
 
-function handleLike() {
+async function handleLike() {
   liked.value = true
-  // Ajouter ici l'appel API pour liker le profil.
+  const response = await new_iteraction(userStore.id, userProfileStore.id, "Liked")
+  if (response == null){
+    liked.value = false
+  }
+  notificationRef.value?.make_notification(response)
 }
 
-function handleUnlike() {
+async function handleUnlike() {
   liked.value = false
-  // Ajouter ici l'appel API pour retirer le like.
+  const response = await new_iteraction(userStore.id, userProfileStore.id, "Unliked")
+  if (response == null){
+    liked.value = true
+  }
+  notificationRef.value?.make_notification(response)
 }
 
 function handleReport() {
   showReportModal.value = true
 }
 
-function handleReportSubmit(reason: ReportReason) {
+async function handleReportSubmit(reason: ReportReason) {
   showReportModal.value = false
   // console.log('Utilisateur signalé :', userProfileStore.id)
   // console.log('Raison :', reason)
-  // Ajouter ici l'appel API de signalement.
+  const response = await new_iteraction(userStore.id, userProfileStore.id, "Reported")
+  notificationRef.value?.make_notification(response)
 }
 
-function handleBlocked() {
+async function handleBlocked() {
   // console.log('Utilisateur bloqué :', userProfileStore.id)
-  // Ajouter ici l'appel API de blocage.
+  const response = await new_iteraction(userStore.id, userProfileStore.id, "Blocked")
+  // if (response == null){
+    
+  // }
+  notificationRef.value?.make_notification(response)
 }
 </script>
 

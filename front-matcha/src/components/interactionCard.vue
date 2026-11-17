@@ -3,10 +3,15 @@
 import { computed } from 'vue'
 
 const props = defineProps<{
-  from_username: string
+  from_username?: string
   to_username?: string
+  user_id: string
   typeOfInter: string
   created_at: string | Date
+}>()
+
+const emit = defineEmits<{
+  clickOnProfile: [user_id: string]
 }>()
 
 const INTERACTION_LABEL: Record<
@@ -15,11 +20,13 @@ Record<string, string>
 > = {
   from: {
     Liked: 'liked you',
+    Unliked: 'unliked you',
     Viewed: 'viewed your profile',
     Blocked: 'blocked you',
   },
   to: {
     Liked: 'You liked',
+    Unliked: 'You unliked',
     Viewed: 'You viewed the profile of',
     Blocked: 'You blocked',
   },
@@ -89,7 +96,8 @@ const typeClass = computed(() => {
   
   <div class="interaction-card__content">
     <p class="interaction-card__description">
-      <strong class="interaction-card__username" :title="from_username">
+      <strong class="interaction-card__username" :title="from_username"
+      @click="emit('clickOnProfile', user_id)">
         {{ from_username }}
       </strong>
       
@@ -101,6 +109,7 @@ const typeClass = computed(() => {
       v-if="hasTarget"
       class="interaction-card__username"
       :title="to_username"
+      @click="emit('clickOnProfile', user_id)"
       >
       {{ to_username }}
     </strong>
@@ -179,6 +188,9 @@ const typeClass = computed(() => {
   font-weight: 600;
 }
 
+.interaction-card__username:hover {
+    cursor: url('../../public/cursor.cur'), auto;
+}
 .interaction-card__meta {
   display: flex;
   align-items: center;

@@ -3,14 +3,15 @@ from utils.exceptions import ValidationError
 from utils.validate import validate_uuid, validate_enum
 from utils.response import success
 import services.interaction_service as s
+import services.match_service as sm
 from utils.decorators import profile_completed
 
 interaction_bp = Blueprint("interaction", __name__, url_prefix="/api/interaction")
 
-TYPEOF_INTER = ['Liked', 'Viewed', 'Matched']
+TYPEOF_INTER = ['Liked', 'Unliked', 'Viewed', 'Blocked', 'Reported']
 
 @interaction_bp.route("/", methods=["POST"])
-@profile_completed
+# @profile_completed
 def create_interaction():
     data = request.get_json()
 
@@ -33,15 +34,38 @@ def create_interaction():
         "to_user_id"
     )
 
+    if from_user_id == to_user_id:
+        raise ValidationError("Are you that lonely ? user ids must be distinct")
+
     which_interaction = validate_enum(
         data["which_interaction"],
         "which_interaction",
         TYPEOF_INTER
     )
 
-    result = s.create_interaction(from_user_id, to_user_id, which_interaction)
+    if which_interaction not in TYPEOF_INTER:
+        raise ValidationError("Must be a valid type of interaction")
 
-    return success(result, 201)
+    result_inter = s.create_interaction(from_user_id, to_user_id, which_interaction)
+    result_match = None
+    match_created = False
+    match_deleted = False
+
+    # if which_interaction=="Liked" and s.check_like_between(to_user_id, from_user_id):
+    #     result_match = sm.create_match(from_user_id, to_user_id)
+    #     match_created = True
+
+    # elif which_interaction=="Unlike" and sm.check_match_between(to_user_id, from_user_id):
+    #     result_match = sm.delete_match(from_user_id, to_user_id)
+    #     match_deleted = True
+
+
+    return success({
+        "interaction": result_inter,
+        "match": result_match,
+        "match_created": match_created,
+        "match_deleted": match_deleted
+    }, 201)
 
 
 @interaction_bp.route("/from/<uuid:user_id>/", methods=["GET"])
