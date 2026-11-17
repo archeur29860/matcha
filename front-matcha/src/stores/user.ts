@@ -20,7 +20,6 @@ export const useUserStore = defineStore(
         username.value = "";
         first_name.value = "";
         last_name.value = "";
-        age.value = 0;
 
         jwt.value = "";
         localStorage.removeItem("token");
@@ -32,7 +31,6 @@ export const useUserStore = defineStore(
       username,
       first_name,
       last_name,
-      age
     }
     },
     {

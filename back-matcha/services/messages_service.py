@@ -1,11 +1,9 @@
-
 def notify_user(socketio, user_id, notification):
     socketio.emit(
         "new_notification",
         notification,
         to=f"user:{user_id}",
     )
-
 
 def send_private_message(
     socketio,

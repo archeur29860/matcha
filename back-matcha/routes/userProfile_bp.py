@@ -3,7 +3,7 @@ from utils.exceptions import ValidationError
 from utils.validate import validate_uuid
 from utils.response import success, error
 import services.userProfile_service as s
-from services.messages_service import send_private_messend_private_message
+from services.messages_service import send_private_message
 
 userProfile_bp = Blueprint("userProfile", __name__, url_prefix="/api/userprofile")
 
