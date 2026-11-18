@@ -1,51 +1,28 @@
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import Input from '@/components/input.vue';
+import { useForm, Field, ErrorMessage } from 'vee-validate'
+import { required } from '@vee-validate/rules'
+import MultiSelect from '@/components/multiSelect.vue';
+import SingleSelect from '@/components/singleSelect.vue';
+
 
 const router = useRouter();
 
-const email = ref('');
-const password = ref('');
-const password1 = ref('');
-const username = ref('');
-const first_name = ref('');
-const last_name = ref('');
-const age = ref('');
-const gender = ref('Other');
-const gender_pref = ref<string[]>(['Male', 'Female']);
-const bio = ref('');
-const picture_profile_index = ref('');
-const localisation = ref('');
-const tags = ref('');
+const { onSubmit, values, isSubmitting } = useForm({
+  initialValues: {
+    email: '', password: '', pwd: '', username: '',
+    first_name: '', last_name: '', age: '', gender: 'Other',
+    gender_pref: ['Male', 'Female'], bio: '',
+    picture_profile_index: '', localisation: '', tags: '',
+  },
+})
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-const isValidEmail = computed(() =>
-    emailRegex.test(email.value)
-);
-
-const isFormValid = computed(() =>
-    isValidEmail.value &&
-    password.value.trim() !== '' &&
-    password.value.trim() == password1.value.trim() &&
-    username.value.trim() !== '' &&
-    first_name.value.trim() !== '' &&
-    last_name.value.trim() !== '' &&
-    age.value.trim() !== '' &&
-    gender.value.trim() !== '' &&
-    gender_pref.value.length > 0 &&
-    bio.value.trim() !== '' &&
-    picture_profile_index.value.trim() !== '' &&
-    localisation.value.trim() !== '' &&
-    tags.value.trim() !== ''
-);
-
-async function handleclick() {
-    if (!isFormValid.value) return;
-
+function matchesPassword(value: unknown) {
+  return value === values.password | "The passwords aren't matching"
+}
+const onSubmit = handleSubmit(async (form) => {
     try {
         const response = await fetch(
             'http://localhost:5000/api/users/',
@@ -55,25 +32,15 @@ async function handleclick() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: email.value.trim(),
-                    username: username.value.trim(),
-                    first_name: first_name.value.trim(),
-                    last_name: last_name.value.trim(),
-                    password: password.value,
-                    age: age.value || null,
-                    gender: gender.value,
-                    gender_pref: gender_pref.value,
-                    bio: bio.value,
-                    picture_profile_index:
-                        picture_profile_index.value === ''
-                            ? nullpicture_profile
-                            : Number(picture_profile_index.value),
-                    localisation: localisation.value || null,
-                    tags: tags.value
-                        .split(',')
-                        .map(tag => tag.trim())
-                        .filter(Boolean)
-                        .map(Number),
+                    email: form.email.trim(),
+                    username: form.username.trim(),
+                    first_name: form.first_name.trim(),
+                    last_name: form.last_name.trim(),
+                    password: form.password,
+                    age: form.age | null,
+                    gender: form.gender,
+                    gender_pref: form.gender_pref,
+                    bio: form.bio
                 }),
             }
         );
@@ -91,112 +58,90 @@ async function handleclick() {
         await router.push('/login');
 
     } catch (error: unknown) {
-        console.error('Erreur réseau :', error);
+        console.error('error network :', error);
     }
 }
 </script>
 
 <template>
-    <form @submit.prevent="handleclick">
-        <div :class="{ 'email-invalid': email && !isValidEmail }">
-            <Input
-                v-model="email"
-                type="email"
-                placeholder="exemple@domaine.com"
-            />
-        </div>
+    <form @submit.prevent="onSubmit">
+        <label>Email</label>
+        <Field name="email" rules="required|email|max:255" v-slot="{ field }">
+            <Input v-model="field.value" type="email" placeholder="exemple@domaine.com" />
+        </Field>
+        <ErrorMessage name="email" class="field-error" />
 
-        <Input
-            v-model="password"
-            type="password"
-            placeholder="password"
-        />
+        <label>Password</label>
+        <Field name="password" rules="required|max:255" v-slot="{ field }">
+            <Input v-model="field.value" type="password" 
+            placeholder="password" />
+        </Field>
+        <ErrorMessage name="password" class="field-error" />
 
-        <Input
-            v-model="password1"
-            type="password"
-            placeholder="confirm password"
-        />
+        <label>Confirm password</label>
+        <Field name="pwd" rules="required|max:255" v-slot="{ field }">
+            <Input v-model="field.value" type="password" 
+            placeholder="confirm password" />
+        </Field>
+        <ErrorMessage name="pwd" class="field-error" />
+        
+        <label>Username</label>
+        <Field name="username" rules="required|max:50|min:2" v-slot="{ field }">
+            <Input v-model="field.value" type="text" placeholder="username" />
+        </Field>
+        <ErrorMessage name="username" class="field-error" />
 
-        <Input
-            v-model="username"
-            type="text"
-            placeholder="username"
-        />
+        <label>First name</label>
+        <Field name="first_name" rules="required|max:50|min:3" v-slot="{ field }">
+            <Input v-model="field.value" type="text" placeholder="John" />
+        </Field>
+        <ErrorMessage name="first_name" class="field-error" />     
 
-        <Input
-            v-model="first_name"
-            type="text"
-            placeholder="Jonh"
-        />
+        <label>Last name</label>
+        <Field name="last_name" rules="required|max:100|min:5" v-slot="{ field }">
+            <Input v-model="field.value" type="text" placeholder="last name" />
+        </Field>
+        <ErrorMessage name="last_name" class="field-error" /> 
 
-        <Input
-            v-model="last_name"
-            type="text"
-            placeholder="Doe"
-        />
+        <label>Birthday</label>
+        <Field name="age" rules="required|min_age:18" v-slot="{ field }">
+            <Input v-model="field.value" type="date" placeholder="birthday" />
+        </Field>
+        <ErrorMessage name="age" class="field-error" />
 
-        <Input
-            v-model="age"
-            type="date"
-            placeholder="birthday"
-        />
+        <label>Gender</label>
+        <Field name="gender" rules="required|one_of:Male,Female,Other" v-slot="{ field }">
+            <SingleSelect v-model="field.value" />
+        </Field>
+        <ErrorMessage name="gender" class="field-error" />
 
-        <label for="gender">Genre</label>
-        <select id="gender" v-model="gender">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-
-        <label for="gender_pref">Genres preference</label>
-        <select id="gender_pref" v-model="gender_pref" multiple>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-
-        <label for="bio">Bio</label>
-        <textarea
-            id="bio"
-            v-model="bio"
-            placeholder="about you"
-        >
-        </textarea>
-        <Input
-            v-model="picture_profile_index"
-            type="number"
-            placeholder="Index of the picture"
-        />
-
-        <Input
-            v-model="localisation"
-            type="text"
-            placeholder="Localisation"
-        />
-
-        <Input
-            v-model="tags"
-            type="text"
-            placeholder="Interest(1, 2, 3)"
-        />
-
-
+        <label>Gender preferences</label>
+        <Field name="gender_pref" rules="required|one_of:Male,Female,Other" v-slot="{ field }">
+            <MultiSelect v-model="field.value" />
+        </Field>
+        <ErrorMessage name="gender_pref" class="field-error" />
+        
+        <label>Bio</label>
+        <Field name="bio" rules="required|max:2000|min:20" v-slot="{ field }">
+            <textarea v-model="field.value" placeholder="about you"></textarea>
+        </Field>
+        <ErrorMessage name="bio" class="field-error" />
+        <br/>
+        <!-- v-if="!profile_completed" -->
         <button
-            v-if="!profile_completed"
             type="submit"
-            :disabled="!isFormValid"
+            :disabled="isSubmitting"
         >
             Register
         </button>
-
+<!-- 
         <button
             v-else
             type="button"
             @click="modifyProfile"
         >
             Modify
-        </button>
+        </button> -->
 
 
         <button type="button" @click="router.push('/login')">

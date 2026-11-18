@@ -5,7 +5,9 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 
+
 import './assets/main.css'
+import './validation/rules_form_user_profile.js'
 
 const app = createApp(App)
 const pinia = createPinia()
