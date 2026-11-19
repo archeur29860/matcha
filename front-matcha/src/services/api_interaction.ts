@@ -30,7 +30,6 @@ export async function new_iteraction(from_user:string, to_user:string, typeof_in
     
     if (!response.ok) {
         console.error('Erreur HTTP:', response.status, data.error);
-        return;
     }
     
     return data;
@@ -44,7 +43,6 @@ export async function get_list_interaction_from(user_id:string, limit:number = 2
 
     if (!response.ok) {
         console.error("Erreur HTTP:", response.status, data.error);
-        return;
     }
 
     return mapInteractionType(data.data.items);
@@ -58,7 +56,6 @@ export async function get_list_interaction_to(user_id:string, limit:number = 20,
 
     if (!response.ok) {
         console.error("Erreur HTTP:", response.status, data.error);
-        return;
     }
 
     return mapInteractionType(data.data.items);
@@ -72,7 +69,6 @@ export async function isLiked(from_user:string, to_user:string) {
 
     if (!response.ok) {
         console.error("Erreur HTTP:", response.status, data.error);
-        return;
     }
 
     return data;

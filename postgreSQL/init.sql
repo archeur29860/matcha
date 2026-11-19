@@ -145,3 +145,30 @@ CREATE TABLE IF NOT EXISTS tags (
   id SERIAL PRIMARY KEY,
   label VARCHAR(25) UNIQUE
 );
+
+---- LOCALISATION ----
+CREATE TABLE IF NOT EXISTS localisation (
+  user_id UUID PRIMARY KEY UNIQUE,
+  street VARCHAR(150),
+  district VARCHAR(150),
+  city VARCHAR(150) NOT NULL,
+  postcode VARCHAR(5) NOT NULL,
+  department VARCHAR(150) NOT NULL,
+  lat FLOAT NOT NULL,
+  long FLOAT NOT NULL,
+  gps_consent BOOLEAN NOT NULL DEFAULT TRUE,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  
+  --- Foreign Key ---
+  CONSTRAINT fk_user
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+  
+  --- Validation Constraints ---
+  CONSTRAINT chk_user_latitude
+    CHECK (lat BETWEEN -90 AND 90),
+  
+  CONSTRAINT chk_user_longitude
+    CHECK (long BETWEEN -180 AND 180)
+);

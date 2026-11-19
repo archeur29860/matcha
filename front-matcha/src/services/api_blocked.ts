@@ -17,7 +17,6 @@ export async function block_user(user_id:string, user_id_blocked:string){
 
     if (!response.ok) {
         console.error('Erreur HTTP:', response.status, data.error);
-        return data;
     }
 
     return data;
@@ -39,7 +38,6 @@ export async function remove_blocked_relation(user_id:string, user_id_blocked:st
 
     if (!response.ok) {
         console.error('Erreur HTTP:', response.status, data.error);
-        return data;
     }
 
     return data;
@@ -52,7 +50,6 @@ export async function get_user_blocked_by(user_id:string){
 
     if (!response.ok) {
         console.error('Erreur HTTP:', response.status, data.error);
-        return data;
     }
 
     return data;
