@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import Input from '@/components/input.vue';
@@ -10,17 +9,15 @@ import SingleSelect from '@/components/singleSelect.vue';
 
 const router = useRouter();
 
-const { onSubmit, values, isSubmitting } = useForm({
+const { handleSubmit, values, isSubmitting } = useForm({
   initialValues: {
     email: '', password: '', pwd: '', username: '',
-    first_name: '', last_name: '', age: '', gender: 'Other',
-    gender_pref: ['Male', 'Female'], bio: '',
-    picture_profile_index: '', localisation: '', tags: '',
+    first_name: '', last_name: '',
   },
 })
 
 function matchesPassword(value: unknown) {
-  return value === values.password | "The passwords aren't matching"
+  return value === values.password || "The passwords aren't matching"
 }
 const onSubmit = handleSubmit(async (form) => {
     try {
@@ -37,10 +34,6 @@ const onSubmit = handleSubmit(async (form) => {
                     first_name: form.first_name.trim(),
                     last_name: form.last_name.trim(),
                     password: form.password,
-                    age: form.age | null,
-                    gender: form.gender,
-                    gender_pref: form.gender_pref,
-                    bio: form.bio
                 }),
             }
         );
@@ -57,10 +50,12 @@ const onSubmit = handleSubmit(async (form) => {
         // Redirection vers la connexion
         await router.push('/login');
 
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
         console.error('error network :', error);
     }
-}
+})
+
 </script>
 
 <template>
@@ -92,41 +87,17 @@ const onSubmit = handleSubmit(async (form) => {
         <ErrorMessage name="username" class="field-error" />
 
         <label>First name</label>
-        <Field name="first_name" rules="required|max:50|min:3" v-slot="{ field }">
+        <Field name="first_name" rules="required|max:50|min:2" v-slot="{ field }">
             <Input v-model="field.value" type="text" placeholder="John" />
         </Field>
         <ErrorMessage name="first_name" class="field-error" />     
 
         <label>Last name</label>
-        <Field name="last_name" rules="required|max:100|min:5" v-slot="{ field }">
+        <Field name="last_name" rules="required|max:50|min:5" v-slot="{ field }">
             <Input v-model="field.value" type="text" placeholder="last name" />
         </Field>
         <ErrorMessage name="last_name" class="field-error" /> 
 
-        <label>Birthday</label>
-        <Field name="age" rules="required|min_age:18" v-slot="{ field }">
-            <Input v-model="field.value" type="date" placeholder="birthday" />
-        </Field>
-        <ErrorMessage name="age" class="field-error" />
-
-        <label>Gender</label>
-        <Field name="gender" rules="required|one_of:Male,Female,Other" v-slot="{ field }">
-            <SingleSelect v-model="field.value" />
-        </Field>
-        <ErrorMessage name="gender" class="field-error" />
-
-        <label>Gender preferences</label>
-        <Field name="gender_pref" rules="required|one_of:Male,Female,Other" v-slot="{ field }">
-            <MultiSelect v-model="field.value" />
-        </Field>
-        <ErrorMessage name="gender_pref" class="field-error" />
-        
-        <label>Bio</label>
-        <Field name="bio" rules="required|max:2000|min:20" v-slot="{ field }">
-            <textarea v-model="field.value" placeholder="about you"></textarea>
-        </Field>
-        <ErrorMessage name="bio" class="field-error" />
-        <br/>
         <!-- v-if="!profile_completed" -->
         <button
             type="submit"
@@ -134,15 +105,6 @@ const onSubmit = handleSubmit(async (form) => {
         >
             Register
         </button>
-<!-- 
-        <button
-            v-else
-            type="button"
-            @click="modifyProfile"
-        >
-            Modify
-        </button> -->
-
 
         <button type="button" @click="router.push('/login')">
             Already have an account?
@@ -151,12 +113,16 @@ const onSubmit = handleSubmit(async (form) => {
 </template>
 
 <style scoped>
-.email-invalid {
-    border: 1px solid red;
+
+.field-error {
+  display: block;
+  margin: 4px 0 10px;
+  color: #d23b5a;
+  font-size: 13px;
 }
 
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
-</style>
+</style> 
