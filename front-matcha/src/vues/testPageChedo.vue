@@ -38,41 +38,10 @@ function changeMode(newMode: 'create' | 'update') {
       </p>
     </header>
 
-    <!-- Choix du mode -->
-
-    <div class="mode-selector">
-      <button
-        :class="{ active: mode === 'create' }"
-        @click="changeMode('create')"
-      >
-        Nouvelle localisation
-      </button>
-
-      <button
-        :class="{ active: mode === 'update' }"
-        @click="changeMode('update')"
-      >
-        Modifier ma localisation
-      </button>
-    </div>
-
     <!-- Composant enfant -->
 
     <SituGeo
-      :key="mode"
-      :mode="mode"
-      @saved="handleLocationSaved"
     />
-
-    <!-- Résultat -->
-
-    <section v-if="savedLocation" class="saved-result">
-      <h2>Localisation enregistrée</h2>
-
-      <p>{{ message }}</p>
-
-      <pre>{{ JSON.stringify(savedLocation, null, 2) }}</pre>
-    </section>
 
   </main>
 </template>
