@@ -30,6 +30,7 @@ onMounted(async () => {
     const result = await get_userProfile(String(route.params.user_id))
 
     // console.log('Réponse API :', result)
+    console.log(result)
     notificationRef.value?.make_notification(result)
 
     if (!result.success || !result.data) {
@@ -220,7 +221,16 @@ async function handleBlocked() {
         <div class="profile-viewer__meta">
           <div class="profile-viewer__location">
             <span>📍</span>
-            <span>{{ userProfileStore.location }}</span>
+            <span>
+              {{ [
+                userProfileStore.location?.street,
+                userProfileStore.location?.district,
+                userProfileStore.location?.postcode,
+                userProfileStore.location?.city,
+                userProfileStore.location?.department
+              ].filter(Boolean).join(', ')
+              }}
+          </span>
           </div>
 
           <div class="profile-viewer__last-connection">

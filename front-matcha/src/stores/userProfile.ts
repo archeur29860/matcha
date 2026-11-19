@@ -1,15 +1,7 @@
+
 import { defineStore } from "pinia";
 import { ref } from "vue";
-
-interface Tag {
-	id: string
-	label: string
-}
-
-interface Picture {
-	id: number
-	url: string
-}
+import type { Location, Tag, Picture } from "@/types/profile";
 
 export const useUserProfileStore = defineStore(
 	'userProfile',
@@ -18,17 +10,17 @@ export const useUserProfileStore = defineStore(
 		const username = ref("")
 		const first_name = ref("")
 		const last_name = ref("")
-		const last_connection = ref<string | null>(null);
+		const last_connection = ref<string | null>(null)
 		const age = ref(0)
 		const gender = ref("")
 		const gender_pref = ref<string[]>([])
 		const bio = ref("")
 		const picture_profile_index = ref(0)
 		const popularity = ref(0)
-		const location = ref("")
+		const location = ref<Location | null>(null)
 		const tags = ref<Tag[]>([])
 		const pictures = ref<Picture[]>([])
-		
+
 		return {
 			id,
 			username,

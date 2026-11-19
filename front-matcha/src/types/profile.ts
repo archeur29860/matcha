@@ -1,8 +1,16 @@
+export interface Location {
+  street: string | null
+  district: string | null
+  city: string
+  postcode: string
+  department: string
+}
+
 export interface ProfileCard {
   user_id: string
   username: string
   age: number
-  location: string
+  location: Location | null
   online: boolean
   tags: Tag[]
   bio: string
@@ -13,4 +21,9 @@ export interface ProfileCard {
 export interface Tag {
   id: string
   label: string
+}
+
+export interface Picture {
+	id: number
+	url: string
 }

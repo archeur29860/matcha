@@ -87,7 +87,14 @@ const popularityClass = computed(() => {
 
           <p class="profile-card__location">
             <span>📍</span>
-            {{ profile.location }}
+              {{ [
+                profile.location?.street,
+                profile.location?.district,
+                profile.location?.postcode,
+                profile.location?.city,
+                profile.location?.department
+              ].filter(Boolean).join(', ')
+              }}
           </p>
         </div>
       </header>
