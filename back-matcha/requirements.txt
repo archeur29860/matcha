@@ -9,3 +9,4 @@ flask_cors
 Flask-SocketIO
 simple-websocket
 Unidecode
+requests

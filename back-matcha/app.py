@@ -16,6 +16,7 @@ from routes.userProfile_bp import userProfile_bp
 from routes.pictures_bp import pictures_bp
 from routes.authenticate_bp import auth_bp
 from routes.connected_bp import connected_bp
+from routes.situgeo_bp import situgeo_bp
 
 JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 
@@ -73,6 +74,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(connected_bp)
 app.register_blueprint(userProfile_bp)
 app.register_blueprint(pictures_bp)
+app.register_blueprint(situgeo_bp)
 
 # Ajouter ici le futur blueprint de messagerie :
 # from routes.messages_bp import messages_bp

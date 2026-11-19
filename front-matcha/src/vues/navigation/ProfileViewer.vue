@@ -335,10 +335,12 @@ async function handleBlocked() {
 </template>
 
 <style scoped>
+
 .profile-viewer {
   width: 100%;
   min-height: 100%;
   background: #fff;
+  overflow-x: hidden;
 }
 
 .profile-viewer__status {
@@ -351,7 +353,7 @@ async function handleBlocked() {
   color: #b42345;
 }
 
-/* Photos */
+/* PHOTOS */
 
 .profile-viewer__photos {
   width: 100%;
@@ -403,6 +405,7 @@ async function handleBlocked() {
 
 .profile-viewer__gallery-item {
   height: 220px;
+  min-width: 0;
   overflow: hidden;
   background: #f8eeee;
 }
@@ -419,13 +422,14 @@ async function handleBlocked() {
   transform: scale(1.03);
 }
 
-/* Informations */
+/* INFORMATIONS */
 
 .profile-viewer__info {
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
   padding: 36px 24px 48px;
+  box-sizing: border-box;
 }
 
 .profile-viewer__header {
@@ -471,6 +475,7 @@ async function handleBlocked() {
   color: #8b777d;
   font-size: 14px;
   overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 .profile-viewer__details {
@@ -486,6 +491,7 @@ async function handleBlocked() {
   border: 1px solid #f6d5de;
   border-radius: 14px;
   background: #fff8fa;
+  box-sizing: border-box;
 }
 
 .profile-viewer__detail h2,
@@ -503,13 +509,14 @@ async function handleBlocked() {
   overflow-wrap: anywhere;
 }
 
-/* Biographie */
+/* BIOGRAPHIE */
 
 .profile-viewer__bio {
   margin-top: 28px;
   padding: 22px;
   border-radius: 14px;
   background: #fdf5f7;
+  box-sizing: border-box;
 }
 
 .profile-viewer__bio p {
@@ -520,7 +527,7 @@ async function handleBlocked() {
   overflow-wrap: anywhere;
 }
 
-/* Centres d'intérêt */
+/* CENTRES D'INTÉRÊT */
 
 .profile-viewer__tags {
   margin-top: 28px;
@@ -540,6 +547,7 @@ async function handleBlocked() {
   color: #b85570;
   font-size: 14px;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .profile-viewer__empty {
@@ -547,7 +555,7 @@ async function handleBlocked() {
   font-size: 14px;
 }
 
-/* Actions */
+/* ACTIONS */
 
 .profile-viewer__actions {
   display: flex;
@@ -564,9 +572,7 @@ async function handleBlocked() {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
     background 0.2s ease;
 }
 
@@ -612,12 +618,16 @@ async function handleBlocked() {
   margin-right: 6px;
 }
 
-/* Tablette */
+/* TABLETTE */
 
 @media (max-width: 800px) {
   .profile-viewer__main-photo {
     height: 60vh;
     min-height: 350px;
+  }
+
+  .profile-viewer__gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .profile-viewer__gallery-item {
@@ -641,21 +651,22 @@ async function handleBlocked() {
   }
 }
 
-/* Mobile */
+/* MOBILE */
 
 @media (max-width: 600px) {
   .profile-viewer__main-photo {
-    height: 65vh;
-    min-height: 320px;
-    max-height: 550px;
+    height: 55vh;
+    min-height: 280px;
+    max-height: 480px;
   }
 
   .profile-viewer__gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
   }
 
   .profile-viewer__gallery-item {
-    height: 180px;
+    height: clamp(120px, 38vw, 180px);
   }
 
   .profile-viewer__info {
@@ -664,6 +675,7 @@ async function handleBlocked() {
 
   .profile-viewer__header {
     align-items: flex-start;
+    gap: 10px;
   }
 
   .profile-viewer__header h1 {
@@ -699,30 +711,51 @@ async function handleBlocked() {
   }
 
   .profile-viewer__actions {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
     margin-top: 26px;
   }
 
   .profile-viewer__button {
     width: 100%;
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  .profile-viewer__button--like,
+  .profile-viewer__button--unlike {
+    grid-column: 1 / -1;
   }
 }
 
-/* Petit mobile */
+/* PETIT MOBILE */
 
 @media (max-width: 400px) {
   .profile-viewer__main-photo {
-    height: 60vh;
-    min-height: 280px;
+    height: 50vh;
+    min-height: 250px;
   }
 
   .profile-viewer__gallery-item {
     height: 140px;
   }
 
+  .profile-viewer__info {
+    padding: 20px 12px 28px;
+  }
+
   .profile-viewer__header h1 {
     font-size: 24px;
   }
+
+  .profile-viewer__age {
+    font-size: 15px;
+  }
+
+  .profile-viewer__button {
+    font-size: 13px;
+  }
 }
 </style>
-<!-- ``` -->
