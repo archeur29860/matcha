@@ -7,7 +7,6 @@ export async function get_userProfile(user_id:string) {
 
     if (!response.ok) {
         console.error('Erreur HTTP:', response.status, data.error);
-        return data;
     }
 
     return data;
@@ -34,7 +33,6 @@ export async function get_userProfile_list(
 
   if (!response.ok) {
     console.error('Erreur HTTP:', response.status, data.error)
-    return data
   }
 
   return data
