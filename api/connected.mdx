@@ -1,0 +1,38 @@
+---
+title: "Session connectée"
+description: "Vérifier la validité du JWT et récupérer l'utilisateur courant."
+---
+
+Blueprint `connected_bp`, préfixe `/api/connected`. Code : `back-matcha/routes/connected_bp.py`.
+
+## Vérifier le token
+
+`GET /api/connected/`
+
+Route protégée par `@jwt_required()`. Elle lit l'identité du token avec `get_jwt_identity()` et vérifie que l'utilisateur existe toujours.
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer <token>` obtenu via [l'authentification](/api/authentification).
+</ParamField>
+
+```bash
+curl http://localhost:5000/api/connected/ \
+  -H "Authorization: Bearer <token>"
+```
+
+Réponse `200` :
+
+```json
+{
+  "success": true,
+  "data": { "message": "Token valide", "user_id": "<uuid>" },
+  "error": null
+}
+```
+
+| HTTP | Cause |
+| --- | --- |
+| 400 `VALIDATION_ERROR` | L'utilisateur du token n'existe plus (`User not found`) |
+| 401 | Token absent, invalide ou expiré (réponse de Flask-JWT-Extended) |
+
+Côté frontend, cette route est appelée par `get_current_user()` dans `front-matcha/src/services/api_connected.ts`.

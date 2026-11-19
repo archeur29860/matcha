@@ -1,0 +1,157 @@
+---
+title: "Installation"
+description: "Guide d'installation et de premier lancement de l'application Matcha avec Docker Compose."
+---
+
+Matcha s'exécute entièrement dans des conteneurs Docker. Vous n'avez besoin d'aucun runtime local hors Docker et Docker Compose.
+
+## Prérequis
+
+- Docker Engine
+- Docker Compose (plugin ou binaire autonome)
+- Make (optionnel, mais recommandé pour utiliser les commandes du Makefile)
+
+## Variables d'environnement
+
+Créez un fichier `.env` à la racine du projet. Les variables suivantes sont réellement exploitées par `docker-compose.yaml` et attendues par l'application Flask :
+
+<ParamField body="DB_HOST" type="string" required>
+  Hôte de la base de données, généralement `db` (nom du service Docker Compose).
+</ParamField>
+
+<ParamField body="DB_PORT" type="string" required>
+  Port de PostgreSQL, généralement `5432`.
+</ParamField>
+
+<ParamField body="DB_NAME" type="string" required>
+  Nom de la base de données applicative.
+</ParamField>
+
+<ParamField body="DB_USER" type="string" required>
+  Utilisateur applicatif de la base de données.
+</ParamField>
+
+<ParamField body="DB_PASSWORD" type="string" required>
+  Mot de passe de l'utilisateur applicatif.
+</ParamField>
+
+<ParamField body="NB_FAKE_PROFILE" type="string" required>
+  Nombre de profils fictifs à générer par le seed.
+</ParamField>
+
+<ParamField body="JWT_SECRET_KEY" type="string" required>
+  Clé secrète pour la signature des tokens JWT.
+</ParamField>
+
+<ParamField body="POSTGRES_USER" type="string" required>
+  Utilisateur administrateur PostgreSQL (variable d'initialisation du conteneur).
+</ParamField>
+
+<ParamField body="POSTGRES_PASSWORD" type="string" required>
+  Mot de passe de l'administrateur PostgreSQL.
+</ParamField>
+
+<ParamField body="POSTGRES_DB" type="string" required>
+  Nom de la base de données créée à l'initialisation du conteneur PostgreSQL.
+</ParamField>
+
+### Exemple de fichier `.env`
+
+```shell
+DB_HOST=db
+DB_PORT=5432
+DB_NAME=matcha_db
+DB_USER=dbuser
+DB_PASSWORD=dbpassword
+NB_FAKE_PROFILE=500
+JWT_SECRET_KEY=change_me_in_production
+
+POSTGRES_USER=dbuser
+POSTGRES_PASSWORD=dbpassword
+POSTGRES_DB=matcha_db
+```
+
+<Warning>
+  La valeur `JWT_SECRET_KEY` doit être unique et confidentielle en production. Ne la partagez jamais.
+</Warning>
+
+## Lancer l'application
+
+### Avec Make
+
+<Steps>
+  <Step title="Construire et démarrer">
+    ```bash
+    make all
+    ```
+
+    Cette commande exécute `make build` puis `make up`. Elle construit les images Docker et lance les trois services en arrière-plan.
+  </Step>
+  <Step title="Vérifier le statut">
+    ```bash
+    make ps
+    ```
+  </Step>
+  <Step title="Consulter les logs">
+    ```bash
+    make logs
+    ```
+  </Step>
+</Steps>
+
+### Sans Make
+
+```bash
+COMPOSE_BAKE=true docker compose -f docker-compose.yaml build
+COMPOSE_BAKE=true docker compose -f docker-compose.yaml up -d
+```
+
+## Points d'entrée et health check
+
+Le conteneur `app` exécute `entrypoint.sh` au démarrage, qui lance le script de seed puis l'application Flask. Un health check est configuré sur le service `db` via `pg_isready -U dbuser -d matcha_db` ; le service `app` attend que ce health check réussisse avant de démarrer.
+
+Un endpoint de santé est disponible sur l'API :
+
+```http
+GET /api/health
+```
+
+## Commandes Make disponibles
+
+| Cible | Description |
+| --- | --- |
+| `all` | Build + up |
+| `up` | Démarrage des conteneurs en arrière-plan |
+| `build` | Construction des images |
+| `start` | Redémarrage des conteneurs arrêtés |
+| `restart` | Redémarrage des conteneurs |
+| `stop` | Arrêt des conteneurs |
+| `down` | Suppression des conteneurs, images, volumes et orphelins |
+| `ps` | État des conteneurs |
+| `logs` | Logs en temps réel |
+| `images` | Liste des images Docker |
+| `volume` | Liste des volumes Docker |
+| `clean` | Alias de `down` |
+| `prune` | Nettoyage complet du système Docker |
+| `re` | Prune complet + build + up |
+| `re_back` | Rebuild du service `app` uniquement |
+| `re_front` | Rebuild du service `front` uniquement |
+| `re_db` | Rebuild du service `db` uniquement |
+| `matcha` | Ouvrir un shell dans le conteneur `app` |
+| `postgres` | Ouvrir un shell dans le conteneur `db` |
+| `nginx` | Ouvrir un shell dans le conteneur `nginx` (le service nginx n'est pas défini dans `docker-compose.yaml`) |
+
+<Note>
+  La cible `nginx` fait référence à un service qui n'est pas déclaré dans `docker-compose.yaml`. Le port summary mentionne Nginx, mais le fichier de composition actuel ne le contient pas.
+</Note>
+
+## Ports exposés
+
+| Service | Port interne | Port exposé | Usage |
+| --- | --- | --- | --- |
+| PostgreSQL | 5432 | 5432 | Base de données |
+| Flask Backend | 5000 | 5000 | API REST |
+| Vue.js Frontend | 5174 | 5174 | Interface utilisateur |
+| Nginx | 80, 443 | 80, 443 | Reverse proxy (listé dans `port_summary.txt` mais absent de `docker-compose.yaml`) |
+
+Les trois services communiquent sur le réseau Docker `webapp-net` de type bridge. Un volume nommé `postgres_data` persiste les données de la base entre les redémarrages des conteneurs.

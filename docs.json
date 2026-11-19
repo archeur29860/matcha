@@ -17,8 +17,43 @@
             "group": "Introduction",
             "pages": [
               "index",
+              "installation",
               "architecture",
-              "installation"
+              "cahier-des-charges"
+            ]
+          },
+          {
+            "group": "Backend",
+            "pages": [
+              "backend/conventions-api",
+              "backend/authentification",
+              "backend/temps-reel",
+              "backend/seed"
+            ]
+          },
+          {
+            "group": "Référence API",
+            "pages": [
+              "api/authentification",
+              "api/users",
+              "api/userprofile",
+              "api/interactions",
+              "api/blocked",
+              "api/connected",
+              "api/tags",
+              "api/pictures"
+            ]
+          },
+          {
+            "group": "Base de données",
+            "pages": [
+              "database/schema"
+            ]
+          },
+          {
+            "group": "Frontend",
+            "pages": [
+              "frontend/structure"
             ]
           }
         ]

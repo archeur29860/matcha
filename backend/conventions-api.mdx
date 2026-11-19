@@ -1,0 +1,236 @@
+---
+title: "Conventions API"
+description: "Normes d'architecture, de gestion d'erreurs et de format de réponse entre Flask et Vue."
+---
+
+Ces règles proviennent de `back-matcha/normes_api.md` et s'appliquent à chaque nouvelle fonctionnalité.
+
+## Architecture
+
+```text
+routes/
+    └── feature_bp.py
+services/
+    └── feature_service.py
+utils/
+    ├── exceptions.py
+    ├── error_handler.py
+    ├── response.py
+    └── validate.py
+```
+
+| Dossier | Responsabilité |
+| --- | --- |
+| `routes/` | HTTP, récupération des données et validation des entrées |
+| `services/` | Logique métier et accès à la base de données |
+| `utils/exceptions.py` | Exceptions applicatives |
+| `utils/error_handler.py` | Transformation des exceptions en réponses HTTP |
+| `utils/response.py` | Format standard des réponses |
+| `utils/validate.py` | Validations réutilisables |
+
+## Routes
+
+Une route doit uniquement :
+
+1. récupérer les données ;
+2. vérifier leur présence ;
+3. valider leur format ;
+4. appeler le service ;
+5. retourner une réponse standardisée.
+
+```python
+@blueprint.route("/", methods=["POST"])
+def create_resource():
+    data = request.get_json()
+
+    if not data:
+        raise ValidationError("JSON body required")
+
+    if "field" not in data:
+        raise ValidationError("field is required")
+
+    field = validate_xxx(data["field"], "field")
+
+    result = service.create_resource(field)
+
+    return success(result, 201)
+```
+
+Une route ne doit pas contenir de SQL, gérer de `try/except Exception`, faire de `print()` pour les erreurs, construire manuellement les réponses JSON ni contenir de logique métier complexe.
+
+## Services
+
+Le service contient la logique métier et les requêtes SQL. Toute transaction suit ce schéma :
+
+```text
+try
+ ├── execute
+ ├── récupération résultat
+ └── commit
+
+except erreur connue
+ ├── rollback
+ └── raise AppError
+
+except erreur inconnue
+ ├── rollback
+ └── raise
+```
+
+Exemple réel (`services/tags_service.py`) :
+
+```python
+def insert_tag(new_label: str) -> dict:
+    db = get_db()
+    try:
+        with db.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO tags (label) VALUES (%s) RETURNING id, label",
+                (new_label,),
+            )
+            tag = cursor.fetchone()
+        db.commit()
+        return tag
+    except IntegrityError:
+        db.rollback()
+        raise ConflictError("Resource already exists")
+    except Exception:
+        db.rollback()
+        raise
+```
+
+## Exceptions
+
+Toutes les erreurs applicatives héritent de `AppError` (`utils/exceptions.py`) :
+
+| Classe | Code | HTTP |
+| --- | --- | --- |
+| `AppError(code, message, status_code=400, details=None)` | libre | libre |
+| `ValidationError(message, details=None)` | `VALIDATION_ERROR` | 400 |
+| `NotFoundError(message="Resource not found")` | `NOT_FOUND` | 404 |
+| `ConflictError(message)` | `CONFLICT` | 409 |
+
+Les services lèvent aussi des `AppError` avec des codes métier précis, par exemple `BLOCK_ALREADY_EXISTS`, `USER_ALREADY_EXISTS` ou `TO_USER_NOT_FOUND`. Les codes métier s'écrivent en `UPPER_SNAKE_CASE`.
+
+## Codes HTTP
+
+| HTTP | Code | Utilisation |
+| --- | --- | --- |
+| `200` |  | Requête réussie |
+| `201` |  | Ressource créée |
+| `204` |  | Succès sans contenu |
+| `400` | `VALIDATION_ERROR` | Données invalides |
+| `401` | `UNAUTHORIZED` | Authentification requise |
+| `403` | `FORBIDDEN` | Permission refusée |
+| `404` | `NOT_FOUND` | Ressource inexistante |
+| `409` | `CONFLICT` | Conflit / doublon |
+| `422` | `INVALID_DATA` | Données sémantiquement invalides |
+| `500` | `INTERNAL_ERROR` | Erreur serveur |
+
+## Format des réponses
+
+Toutes les réponses passent par `success()` ou `error()` (`utils/response.py`).
+
+<CodeGroup>
+
+```json Succès
+{
+  "success": true,
+  "data": {},
+  "error": null
+}
+```
+
+```json Erreur
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "...",
+    "details": {}
+  }
+}
+```
+
+</CodeGroup>
+
+Dans une route, on écrit `return success(data, 200)` pour un succès et `raise ValidationError(...)` pour une erreur.
+
+## Error handler
+
+`register_error_handlers(app)` (`utils/error_handler.py`) est le point central de gestion des erreurs :
+
+| Exception | Réponse |
+| --- | --- |
+| `AppError` | `error(e.code, e.message, e.status_code, e.details)` |
+| `HTTPException` (Werkzeug, par exemple 404 de route) | Code dérivé du nom (`NOT_FOUND`, `METHOD_NOT_ALLOWED`...) |
+| Toute autre `Exception` | Journalisée, puis `500 INTERNAL_ERROR` |
+
+```text
+Route ── ValidationError
+  └── Service ── ConflictError / NotFoundError / Exception
+                         │
+                         ▼
+                   error_handler
+                         │
+                         ▼
+               réponse JSON standardisée
+```
+
+## Validation
+
+Les validateurs réutilisables sont dans `utils/validate.py`. Ils lèvent une `ValidationError` au lieu de renvoyer `None`.
+
+| Fonction | Rôle |
+| --- | --- |
+| `validate_uuid(value, field_name)` | Convertit en `UUID`, sinon erreur |
+| `validate_len_string(value, field_name, limit)` | Vérifie que la longueur est strictement inférieure à `limit` |
+| `validate_enum(value, field_name, enum_value)` | Vérifie l'appartenance à une liste de valeurs |
+
+```python
+user_id = validate_uuid(data["user_id"], "user_id")
+```
+
+## Côté Vue
+
+Le frontend traite toutes les réponses avec la même structure. La convention recommandée est de centraliser les appels dans une fonction :
+
+```typescript
+export async function apiFetch(url, options = {}) {
+  const response = await fetch(url, options);
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw result.error;
+  }
+
+  return result.data;
+}
+```
+
+```typescript
+try {
+  const data = await apiFetch("http://localhost:5000/api/blocked/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id, user_id_blocked }),
+  });
+} catch (error) {
+  console.error(error.code, error.message, error.details);
+}
+```
+
+Le composant Vue n'a ainsi pas besoin de connaître la structure HTTP complète.
+
+## Règle principale
+
+<Warning>
+  Une erreur ne doit jamais être silencieuse. N'écrivez jamais `except Exception: return None`, mais `except Exception: db.rollback(); raise`.
+</Warning>
+
+Cette convention garantit une seule structure de réponse pour toute l'API.
+
+<Note>
+  Quelques routes ne respectent pas encore entièrement ces normes, notamment la validation de `/api/users/` (voir [Utilisateurs](/api/users)).
+</Note>

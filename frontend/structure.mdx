@@ -1,0 +1,97 @@
+---
+title: "Structure du frontend"
+description: "Organisation de l'application Vue 3 front-matcha."
+---
+
+Le frontend est une application Vue 3 + TypeScript construite avec Vite, dans `front-matcha/`. Il tourne dans le conteneur `matcha_front` sur le port `5174` (`npm run dev`).
+
+## Arborescence
+
+```text
+front-matcha/src/
+├── App.vue, main.ts
+├── assets/          # main.css
+├── components/      # composants réutilisables (+ modal/, documentation_components/)
+├── composable/      # useNavigation.ts
+├── router/          # index.ts
+├── services/        # appels API et Socket.IO
+├── stores/          # stores Pinia
+├── types/           # interaction.ts, profile.ts
+├── vues/            # pages (auth/, navigation/, demos/)
+└── __tests__/       # tests unitaires Vitest
+```
+
+## Dépendances principales
+
+| Paquet | Rôle |
+| --- | --- |
+| `vue`, `vue-router` | Framework et routage |
+| `pinia`, `pinia-plugin-persistedstate` | État global persisté |
+| `socket.io-client` | Temps réel (voir [Temps réel](/backend/temps-reel)) |
+| `vitest`, `cypress` | Tests unitaires et end-to-end |
+
+## Scripts
+
+| Commande | Effet |
+| --- | --- |
+| `npm run dev` | Serveur Vite sur `0.0.0.0:5174` |
+| `npm run build` | Vérification des types puis build |
+| `npm run test:unit` | Tests Vitest |
+| `npm run test:e2e` | Tests Cypress sur le build de preview |
+| `npm run lint` | oxlint puis ESLint |
+| `npm run format` | Prettier sur `src/` |
+
+## Routes
+
+Définies dans `src/router/index.ts`.
+
+| Chemin | Page | Description |
+| --- | --- | --- |
+| `/` | `appLayout.vue` | Layout principal, redirige vers `/home` |
+| `/home` | `HomePage.vue` | Liste des profils suggérés |
+| `/profile/:user_id` | `ProfileViewer.vue` | Consultation d'un profil |
+| `/interaction_history` | `InteractionHistory.vue` | Historique des interactions |
+| `/login` | `LoginPage.vue` | Connexion |
+| `/signup` | `SignupPage.vue` | Inscription |
+
+<Note>
+  Les routes `/test/chedo`, `/test/minotte`, `/demo/interaction`, `/demo/blocked` et `/socket-test` sont des pages de test réservées au développement.
+</Note>
+
+## Stores Pinia
+
+- `stores/user.ts` (`useUserStore`) : identité de l'utilisateur connecté et JWT (lu depuis `localStorage` sous la clé `token`), getter `isAuthenticated`, action `logout()` qui déconnecte le socket et vide l'état. Persisté.
+- `stores/userProfile.ts` (`useUserProfileStore`) : profil consulté (genre, préférences, bio, tags, photos, popularité, localisation...).
+
+## Services API
+
+Chaque fichier de `src/services/` encapsule les appels `fetch` vers `http://localhost:5000/api/...` :
+
+| Fichier | Fonctions | Référence |
+| --- | --- | --- |
+| `api_authenticate.ts` | `login` | [Authentification](/api/authentification) |
+| `api_connected.ts` | `get_current_user` | [Session connectée](/api/connected) |
+| `api_blocked.ts` | `block_user`, `remove_blocked_relation`, `get_user_blocked_by` | [Blocage](/api/blocked) |
+| `api_interaction.ts` | `new_iteraction`, `get_list_interaction_from`, `get_list_interaction_to`, `isLiked` | [Interactions](/api/interactions) |
+| `api_userProfile.ts` | `get_userProfile`, `get_userProfile_list` | [Profils](/api/userprofile) |
+| `socket.ts` | instance `socket` Socket.IO | [Temps réel](/backend/temps-reel) |
+
+Les réponses suivent l'enveloppe décrite dans [Conventions API](/backend/conventions-api).
+
+## Composants
+
+| Composant | Rôle |
+| --- | --- |
+| `searchBarWithOption.vue` | Barre de recherche avec suggestions |
+| `input.vue` | Champ de saisie réutilisable |
+| `profileCard.vue` | Carte d'un profil |
+| `listProfileCard.vue` | Liste de cartes de profils |
+| `interactionCard.vue` | Élément de l'historique d'interactions |
+| `notification.vue` | Notification de succès, d'erreur, d'avertissement ou d'information |
+| `sideBarNavigation.vue` | Barre de navigation latérale |
+| `user_clickable.vue` | Nom d'utilisateur cliquable |
+| `modal/reportModal.vue` | Fenêtre de signalement |
+
+Une documentation détaillée de certains composants se trouve dans `src/components/documentation_components/`.
+
+Le composable `useNavigation.ts` expose `handleClickOnProfile(user_id)`, qui navigue vers `/profile/<user_id>/`.

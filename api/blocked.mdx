@@ -1,0 +1,90 @@
+---
+title: "Blocage"
+description: "Bloquer, débloquer et lister les utilisateurs bloqués."
+---
+
+Blueprint `blocked_bp`, préfixe `/api/blocked`. Code : `back-matcha/routes/blocked_bp.py` et `back-matcha/services/blocked_service.py`.
+
+<Note>
+  Ces routes ne sont pas protégées par JWT pour le moment : l'identifiant de l'utilisateur est passé explicitement dans la requête.
+</Note>
+
+Un utilisateur bloqué n'apparaît plus dans la liste des profils suggérés (voir [Profils](/api/userprofile)), dans les deux sens.
+
+## Bloquer un utilisateur
+
+`POST /api/blocked/`
+
+<ParamField body="user_id" type="string (UUID)" required>
+  Utilisateur qui bloque.
+</ParamField>
+
+<ParamField body="user_id_blocked" type="string (UUID)" required>
+  Utilisateur bloqué.
+</ParamField>
+
+```bash
+curl -X POST http://localhost:5000/api/blocked/ \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": "<uuid>", "user_id_blocked": "<uuid>"}'
+```
+
+Réponse `201` :
+
+```json
+{
+  "success": true,
+  "data": { "user_id": "<uuid>", "user_id_blocked": "<uuid>" },
+  "error": null
+}
+```
+
+| HTTP | Code | Cause |
+| --- | --- | --- |
+| 400 | `VALIDATION_ERROR` | Corps absent, champ manquant ou UUID invalide |
+| 404 | `USER_NOT_FOUND` | `user_id` n'existe pas |
+| 404 | `BLOCKED_USER_NOT_FOUND` | `user_id_blocked` n'existe pas |
+| 409 | `BLOCK_ALREADY_EXISTS` | La relation existe déjà |
+| 409 | `INTEGRITY_ERROR` | Autre violation de contrainte |
+
+## Débloquer un utilisateur
+
+`DELETE /api/blocked/`
+
+Même corps que pour le blocage.
+
+```bash
+curl -X DELETE http://localhost:5000/api/blocked/ \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": "<uuid>", "user_id_blocked": "<uuid>"}'
+```
+
+Réponse `200` : la relation supprimée (`user_id`, `user_id_blocked`). Renvoie `404 NOT_FOUND` si la relation n'existe pas.
+
+## Lister les utilisateurs bloqués
+
+`GET /api/blocked/{user_id}/`
+
+<ParamField path="user_id" type="string (UUID)" required>
+  Utilisateur dont on veut la liste de blocage.
+</ParamField>
+
+```bash
+curl http://localhost:5000/api/blocked/<uuid>/
+```
+
+Réponse `200` :
+
+```json
+{
+  "success": true,
+  "data": [
+    { "username": "jdupont_42", "last_name": "Dupont", "first_name": "Jean" }
+  ],
+  "error": null
+}
+```
+
+<Warning>
+  Si l'utilisateur n'a bloqué personne, la route renvoie `404 NOT_FOUND` plutôt qu'une liste vide.
+</Warning>
