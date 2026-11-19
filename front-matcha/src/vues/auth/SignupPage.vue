@@ -1,25 +1,42 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import Input from '@/components/input.vue';
-import { useForm, Field, ErrorMessage } from 'vee-validate'
-import { required } from '@vee-validate/rules'
-import MultiSelect from '@/components/multiSelect.vue';
-import SingleSelect from '@/components/singleSelect.vue';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useForm, Field as VeeField } from 'vee-validate'
 
+import Input from '@/components/input.vue'
+import { signupSchema } from '@/validation/signupSchema'
+import { useUserStore } from '@/stores/user'
+import { login } from '@/services/api_authenticate'
+import { socket } from '@/services/socket'
+import Notification from '@/components/notification.vue'
+
+const notificationRef = ref<InstanceType<typeof Notification> | null>(null)
 
 const router = useRouter();
+const userStore = useUserStore()
+const formError = ref('')
 
-const { handleSubmit, values, isSubmitting } = useForm({
+const { handleSubmit, isSubmitting } = useForm({
+  validationSchema: signupSchema,
   initialValues: {
-    email: '', password: '', pwd: '', username: '',
-    first_name: '', last_name: '',
+    email: '',
+    password: '',
+    pwd: '',
+    username: '',
+    first_name: '',
+    last_name: '',
   },
 })
+// const { handleSubmit, values, isSubmitting } = useForm({
+//   initialValues: {
+//     email: '', password: '', pwd: '', username: '',
+//     first_name: '', last_name: '',
+//   },
+// })
 
-function matchesPassword(value: unknown) {
-  return value === values.password || "The passwords aren't matching"
-}
+
 const onSubmit = handleSubmit(async (form) => {
+    formError.value = ''
     try {
         const response = await fetch(
             'http://localhost:5000/api/users/',
@@ -40,89 +57,196 @@ const onSubmit = handleSubmit(async (form) => {
 
         const data = await response.json();
 
-        if (!response.ok) {
-            console.error('Erreur HTTP :', response.status, data);
-            return;
-        }
+        notificationRef.value?.make_notification({ ...data, status: response.status })
+        if (!response.ok) return
 
         console.log('Utilisateur créé :', data);
 
         // Redirection vers la connexion
-        await router.push('/login');
+        if (!result.access_token || !result.user) {
+        notificationRef.value?.make_notification({
+            error: { code: 'LOGIN_FAILED', 
+            message: "Creation, but it's impossible to connect" },
+            status: 401,
+        })
+        return
+        }
+        
+        userStore.id = String(result.user.id)
+        userStore.email = result.user.email
+        userStore.username = result.user.username
+        userStore.first_name = result.user.first_name
+        userStore.last_name = result.user.last_name
+        userStore.jwt = result.access_token
+        localStorage.setItem('token', result.access_token)
+        socket.connect()
 
+        await router.push('/profile/edit')
     }
-    catch (error: unknown) {
-        console.error('error network :', error);
-    }
+    notificationRef.value?.make_notification({
+    error: {
+        code: 'NETWORK_ERROR',
+        message: error instanceof Error ? error.message : 'Error network',
+    },
+    status: 0,
+    })
+  }
 })
 
 </script>
 
 <template>
-    <form @submit.prevent="onSubmit">
-        <label>Email</label>
-        <Field name="email" rules="required|email|max:255" v-slot="{ field }">
-            <Input v-model="field.value" type="email" placeholder="exemple@domaine.com" />
-        </Field>
-        <ErrorMessage name="email" class="field-error" />
+    <form class="signup-form" @submit="onSubmit">
+    <div class="field-group">
+        <VeeField v-slot="{ componentField, errors }" name="email">
+        <div class="field" :data-invalid="!!errors.length">
+            <label for="signup-email">Email</label>
+            <Input
+                id="signup-email"
+                v-bind="componentField"
+                type="email"
+                placeholder="exemple@domaine.com"
+                :aria-invalid="!!errors.length"
+            />
+            <p v-if="errors.length" class="field-error">{{ errors[0] }}</p>
+        </div>
+        </VeeField>
 
-        <label>Password</label>
-        <Field name="password" rules="required|max:255" v-slot="{ field }">
-            <Input v-model="field.value" type="password" 
-            placeholder="password" />
-        </Field>
-        <ErrorMessage name="password" class="field-error" />
+        <VeeField v-slot="{ componentField, errors }" name="password">
+        <div class="field" :data-invalid="!!errors.length">
+            <label for="signup-password">Password</label>
+            <Input
+                id="signup-password"
+                v-bind="componentField"
+                type="password"
+                placeholder="password"
+                :aria-invalid="!!errors.length"
+            />
+            <p v-if="errors.length" class="field-error">{{ errors[0] }}</p>
+        </div>
+        </VeeField>
 
-        <label>Confirm password</label>
-        <Field name="pwd" rules="required|max:255" v-slot="{ field }">
-            <Input v-model="field.value" type="password" 
-            placeholder="confirm password" />
-        </Field>
-        <ErrorMessage name="pwd" class="field-error" />
-        
-        <label>Username</label>
-        <Field name="username" rules="required|max:50|min:2" v-slot="{ field }">
-            <Input v-model="field.value" type="text" placeholder="username" />
-        </Field>
-        <ErrorMessage name="username" class="field-error" />
+        <VeeField v-slot="{ componentField, errors }" name="pwd">
+        <div class="field" :data-invalid="!!errors.length">
+            <label for="signup-pwd">Confirm password</label>
+            <Input
+                id="signup-pwd"
+                v-bind="componentField"
+                type="password"
+                placeholder="confirm password"
+                :aria-invalid="!!errors.length"
+            />
+            <p v-if="errors.length" class="field-error">{{ errors[0] }}</p>
+        </div>
+        </VeeField>
 
-        <label>First name</label>
-        <Field name="first_name" rules="required|max:50|min:2" v-slot="{ field }">
-            <Input v-model="field.value" type="text" placeholder="John" />
-        </Field>
-        <ErrorMessage name="first_name" class="field-error" />     
+        <VeeField v-slot="{ componentField, errors }" name="username">
+        <div class="field" :data-invalid="!!errors.length">
+            <label for="signup-username">Username</label>
+            <Input
+                id="signup-username"
+                v-bind="componentField"
+                type="text"
+                placeholder="username"
+                :aria-invalid="!!errors.length"
+            />
+            <p v-if="errors.length" class="field-error">{{ errors[0] }}</p>
+        </div>
+        </VeeField>
 
-        <label>Last name</label>
-        <Field name="last_name" rules="required|max:50|min:5" v-slot="{ field }">
-            <Input v-model="field.value" type="text" placeholder="last name" />
-        </Field>
-        <ErrorMessage name="last_name" class="field-error" /> 
+        <VeeField v-slot="{ componentField, errors }" name="first_name">
+        <div class="field" :data-invalid="!!errors.length">
+            <label for="signup-first-name">First name</label>
+            <Input
+                id="signup-first-name"
+                v-bind="componentField"
+                type="text"
+                placeholder="John"
+                :aria-invalid="!!errors.length"
+            />
+            <p v-if="errors.length" class="field-error">{{ errors[0] }}</p>
+        </div>
+        </VeeField>
 
-        <!-- v-if="!profile_completed" -->
-        <button
-            type="submit"
-            :disabled="isSubmitting"
-        >
-            Register
+        <VeeField v-slot="{ componentField, errors }" name="last_name">
+        <div class="field" :data-invalid="!!errors.length">
+            <label for="signup-last-name">Last name</label>
+            <Input
+                id="signup-last-name"
+                v-bind="componentField"
+                type="text"
+                placeholder="Doe"
+                autocomplete="family-name"
+                :aria-invalid="!!errors.length"
+            />
+            <p v-if="errors.length" class="field-error">{{ errors[0] }}</p>
+        </div>
+        </VeeField>
+        </div>
+
+        <p v-if="formError" class="form-error" role="alert">{{ formError }}</p>
+
+        <div class="form-actions">
+        <button type="submit" :disabled="isSubmitting">Register</button>
+        <button type="button" class="link" @click="router.push('/login')">
+        Already have an account?
         </button>
-
-        <button type="button" @click="router.push('/login')">
-            Already have an account?
-        </button>
-    </form>
+        </div>
+        </form>
 </template>
 
 <style scoped>
 
-.field-error {
-  display: block;
-  margin: 4px 0 10px;
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 420px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field[data-invalid='true'] label {
+  color: #d23b5a;
+}
+
+.field-error,
+.form-error {
+  margin: 0;
   color: #d23b5a;
   font-size: 13px;
 }
 
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
-</style> 
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.secondary,
+button.link {
+  background: transparent;
+  border: 1px solid #f1e5e5;
+  cursor: pointer;
+}
+</style>

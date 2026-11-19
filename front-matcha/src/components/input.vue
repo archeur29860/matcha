@@ -4,12 +4,10 @@ withDefaults(
     type?: string
     placeholder?: string
     disabled?: boolean
+    id?: string
+    ariaInvalid?: boolean
   }>(),
-  {
-    type: 'text',
-    placeholder: '',
-    disabled: false,
-  }
+  { type: 'text', placeholder: '', disabled: false, id: undefined, ariaInvalid: false }
 )
 
 const model = defineModel<string>({ default: '' })
@@ -18,6 +16,8 @@ const model = defineModel<string>({ default: '' })
 <template>
   <div class="input-wrapper">
     <input
+      :id="id"
+      :aria-invalid="ariaInvalid"
       v-model="model"
       :type="type"
       :placeholder="placeholder"

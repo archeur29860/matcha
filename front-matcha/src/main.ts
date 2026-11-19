@@ -7,7 +7,6 @@ import router from './router'
 
 
 import './assets/main.css'
-import './validation/rules_form_user_profile'
 
 const app = createApp(App)
 const pinia = createPinia()
