@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS chat (
   CONSTRAINT fk_chat_id
     FOREIGN KEY (id) 
     REFERENCES matches(id) 
-    ON DELETE CASCADE,
+    ON DELETE CASCADE
 );
 
 ---- BLOCKED -----

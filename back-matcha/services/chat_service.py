@@ -87,7 +87,7 @@ def get_chat(
                 SELECT * FROM chat
                 WHERE id = %s
                 """,
-                chat_id
+                (chat_id, )
             )
             
             messages = cursor.fetchall()

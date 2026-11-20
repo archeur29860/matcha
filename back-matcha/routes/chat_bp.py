@@ -9,7 +9,15 @@ chat_bp = Blueprint("chat", __name__, url_prefix="/api/chat")
 
 @chat_bp.route("/<uuid:chat_id>/", methods=["GET"])
 def get_chat(chat_id):
-    return
+
+    chat_id = validate_uuid(
+        chat_id,
+        "chat_id"
+    )
+    
+    chat_result = s.get_chat(chat_id)
+    
+    return success(chat_result, 200)
 
 @chat_bp.route("/send/<uuid:chat_id>/", methods=["POST"])
 def send_message(chat_id):
@@ -26,7 +34,7 @@ def send_message(chat_id):
     if "from_user_id" not in data:
         raise ValidationError("from_user_id is required")
     if "message" not in data:
-        raise VlidationError("message is required")
+        raise ValidationError("message is required")
     
     from_user_id = validate_uuid(
         data["from_user_id"],

@@ -21,8 +21,6 @@ const loadError = ref('')
 
 type ReportReason = 'fake_account' | 'scam' | 'problematic'
 
-const API_BASE_URL = 'http://localhost:5000/api'
-
 const route = useRoute()
 
 onMounted(async () => {
