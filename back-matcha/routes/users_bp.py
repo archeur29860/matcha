@@ -1,26 +1,12 @@
 from flask import Blueprint, request
 import services.users_service as u
-from utils.validate import validate_len_string, validate_uuid
+from utils.validate import validate_len_string, validate_uuid, validate_password
 from utils.response import success
 from utils.exceptions import ValidationError
 from utils.response import success
-import re
 
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
-def validate_password(value: str) -> None:
-    with open("common_english_words.txt", "r", encoding="utf-8") as f:
-        FORBIDDEN_WORDS = set(line.strip().lower() for line in f)
-    checks = [
-        (len(value) >= 12, "the password must be at least 12 characters"),
-        (bool(re.search(r"[a-z]", value)), "the password must have at least 1 lowercase"),
-        (bool(re.search(r"[A-Z]", value)), "the password must have at least 1 uppercase"),
-        (bool(re.search(r"\d", value)), "the password must have at least 1 number"),
-        (bool(re.search(r"[^A-Za-z0-9]", value)), "the password must have at least 1 special char"),
-    ]
-    for ok, message in checks:
-        if not ok:
-            raise ValidationError(message, {"field": "password"})
 
 
 
@@ -60,16 +46,18 @@ def validate_user_fields(data):
                 {"error": f"{field} cannot be empty"},
                 400
             )
-        if field == "password":
-            validate_password(field_content)
 
         if field in ("email", "password"):
-            validate_len_string(field_content, field, 256)
+            validate_len_string(field_content, field, 255)
         else:
-            validate_len_string(field_content, field, 51)
+            validate_len_string(field_content, field, 50)
 
 
-        all_field_content[field] = field_content
+    all_field_content[field] = field_content
+    validate_password(all_field_content["password"],
+        all_field_content["username"],
+        all_field_content["first_name"],
+        all_field_content["last_name"])
 
     return all_field_content, None
 

@@ -45,7 +45,7 @@ unique
 - 1 Majuscule min
 - 1 caractère spécial min
 - 1 chiffre min
-- ne doit pas être un mot courant
+- ne doit pas être un mot courant anglais
 - ne doit pas contenir son nom ou prénom
 - non null
 

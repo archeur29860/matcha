@@ -43,7 +43,7 @@ def add_user(dict_info: dict) -> dict:
 
         db.commit()
 
-        return {"id": str(user[0]), "email": user[1]}
+        return {"id": str(user["id"]), "email": user["email"]}
 
     except IntegrityError:
         db.rollback()

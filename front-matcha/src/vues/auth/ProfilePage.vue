@@ -1,4 +1,4 @@
-
+<!-- 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useForm, Field, ErrorMessage } from 'vee-validate'
@@ -37,7 +37,15 @@ const onSubmit = handleSubmit(async (form) => {
             gender: form.gender,
             gender_pref: form.gender_pref,
             bio: form.bio,
-            }),
+            }  catch (error: unknown) {
+                notificationRef.value?.make_notification({
+                    error: {
+                        code: 'NETWORK_ERROR',
+                        message: error instanceof Error ? error.message : 'Error network',
+                    },
+                    status: 0,
+                })
+            }
         })
         const data = await response.json();
 
@@ -122,22 +130,6 @@ const onSubmit = handleSubmit(async (form) => {
     </Field>
     <ErrorMessage name="bio" class="field-error" />
 
-<br />
-        <!-- v-if="!profile_completed" -->
-        <button
-            type="submit"
-            :disabled="isSubmitting"
-        >
-            Register
-        </button>
-<!-- 
-        <button
-            v-else
-            type="button"
-            @click="modifyProfile"
-        >
-            Modify
-        </button> -->
 
 
         <button type="button" @click="router.push('/login')">
@@ -159,4 +151,19 @@ button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
-</style>
+</style> -->
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import FormUser from '@/components/formUser.vue'
+
+const formRef = ref<InstanceType<typeof FormUser> | null>(null)
+const router = useRouter()
+</script>
+<template>
+    <FormUser/>
+    <button type="button" @click="modifyProfile">
+            Modify
+        </button> 
+</template>
