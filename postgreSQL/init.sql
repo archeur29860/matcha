@@ -80,29 +80,34 @@ CREATE TABLE IF NOT EXISTS interactions (
 
 ---- MATCHES ---- 
 CREATE TABLE IF NOT EXISTS matches (
-  id UUID DEFAULT gen_random_uuid() UNIQUE,
-  user_low_id UUID NOT NULL,
-  user_high_id UUID NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id UUID DEFAULT gen_random_uuid(),
+    user_low_id UUID NOT NULL,
+    user_high_id UUID NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   --- PK ---
-  PRIMARY KEY (id),
+    PRIMARY KEY (id),
 
   --- Constraint ---
-  CONSTRAINT fk_low_user
-    FOREIGN KEY (user_low_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE,
-  
-  CONSTRAINT fk_high_user
-    FOREIGN KEY (user_high_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE, 
-  
-  CONSTRAINT unique_match_relation
-    UNIQUE (user_low_id, user_high_id)
-);
+    CONSTRAINT fk_low_user
+        FOREIGN KEY (user_low_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
 
+    CONSTRAINT fk_high_user
+        FOREIGN KEY (user_high_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT unique_match_relation
+        UNIQUE (user_low_id, user_high_id),
+
+    CONSTRAINT unique_match_low
+        UNIQUE (id, user_low_id),
+
+    CONSTRAINT unique_match_high
+        UNIQUE (id, user_high_id)
+);
 
 --- CHAT --- 
 CREATE TABLE IF NOT EXISTS chat (
@@ -116,7 +121,7 @@ CREATE TABLE IF NOT EXISTS chat (
   CONSTRAINT fk_chat_id
     FOREIGN KEY (id) 
     REFERENCES matches(id) 
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
 );
 
 ---- BLOCKED -----
@@ -172,3 +177,29 @@ CREATE TABLE IF NOT EXISTS localisation (
   CONSTRAINT chk_user_longitude
     CHECK (long BETWEEN -180 AND 180)
 );
+
+CREATE OR REPLACE FUNCTION check_chat_from_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM matches m
+        WHERE m.id = NEW.id
+          AND (
+              m.user_low_id = NEW.from_user_id
+              OR m.user_high_id = NEW.from_user_id
+          )
+    ) THEN
+        RAISE EXCEPTION
+            'from_user_id must be one of the two users in this match';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_check_chat_from_user
+BEFORE INSERT OR UPDATE ON chat
+FOR EACH ROW
+EXECUTE FUNCTION check_chat_from_user();
