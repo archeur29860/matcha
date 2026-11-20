@@ -1,8 +1,8 @@
 
 from database.connection import get_db
-from utils.exceptions import NotFoundError
+from utils.exceptions import AppError, NotFoundError, ConflictError
 
-PICTURES_FD = "/pictures/"
+
 
 
 def get_user_profile_by_id_with_pictures(user_id: str) -> dict:
@@ -34,8 +34,7 @@ def get_user_profile_by_id_with_pictures(user_id: str) -> dict:
                     up.gender,
                     up.gender_pref,
                     up.bio,
-                    up.popularity,
-
+                    up.popularity,ConflictError
                     (
                         SELECT JSON_AGG(
                             JSON_BUILD_OBJECT(
@@ -69,8 +68,8 @@ def get_user_profile_by_id_with_pictures(user_id: str) -> dict:
                     ON loc.user_id = up.user_id
 
                 WHERE up.user_id = %s
-            """, (user_id,))
-
+                """, (user_id,))
+            ConflictError
             userProfileResult = cursor.fetchone()
 
             if not userProfileResult:
@@ -174,3 +173,64 @@ def get_list_profile_by_id(user_id, limit=20, cursor=None):
         "next_cursor": next_cursor,
         "has_more": has_more,
     }
+
+def create_user_profile(dict_info: dict, user_id) -> dict:
+    db = get_db()
+
+    try:
+        with db.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO userProfile (
+                    user_id,
+                    age,
+                    gender,
+                    gender_pref,
+                    bio,
+                    picture_profile_index,
+                    localisation,
+                    tags
+                )
+                VALUES (
+                    %s,
+                    %s::date,
+                    %s::gender_type,
+                    %s::gender_type[],
+                    %s,
+                    %s,
+                    %s,
+                    %s::int[]
+                )
+                RETURNING
+                    user_id,
+                    age,
+                    gender,
+                    gender_pref,
+                    bio,
+                    picture_profile_index,
+                    localisation,
+                    tags
+                """,
+                (
+                    str(user_id),
+                    dict_info["age"],
+                    dict_info["gender"],
+                    dict_info["gender_pref"],
+                    dict_info["bio"],
+                    dict_info["picture_profile_index"],
+                    dict_info["localisation"],
+                    dict_info["tags"],
+                ),
+            )
+            profile = cursor.fetchone()
+
+        db.commit()
+        return profile
+
+    except IntegrityError:
+        db.rollback()
+        raise ConflictError("Profile already exists or user not found")
+
+    except Exception:
+        db.rollback()
+        raise

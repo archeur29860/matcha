@@ -3,6 +3,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 COPY requirements.txt .
+COPY common_english_words.txt .
 
 RUN apt-get update && apt-get install -y bash && apt-get install vim -y
 

@@ -1,10 +1,14 @@
 from flask import Blueprint, request
 import services.users_service as u
-from utils.validate import validate_len_string, validate_uuid
+from utils.validate import validate_len_string, validate_uuid, validate_password
+from utils.response import success
+from utils.exceptions import ValidationError
 from utils.response import success
 
-
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
+
+
+
 
 def validate_user_fields(data):
     if not isinstance(data, dict):
@@ -44,11 +48,16 @@ def validate_user_fields(data):
             )
 
         if field in ("email", "password"):
-            validate_len_string(field_content, field, 256)
+            validate_len_string(field_content, field, 255)
         else:
-            validate_len_string(field_content, field, 51)
+            validate_len_string(field_content, field, 50)
 
-        all_field_content[field] = field_content
+
+    all_field_content[field] = field_content
+    validate_password(all_field_content["password"],
+        all_field_content["username"],
+        all_field_content["first_name"],
+        all_field_content["last_name"])
 
     return all_field_content, None
 
@@ -61,7 +70,7 @@ def create_user():
         return error
     result = u.add_user(all_field_content)
 
-    return result, 201
+    return success(result, 201)
 
 @users_bp.route("/", methods=["PUT"])
 def modify_user():

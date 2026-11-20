@@ -1,4 +1,4 @@
-from psycopg.errors import UniqueViolation, ForeignKeyViolation
+from psycopg.errors import IntegrityError
 
 from database.connection import get_db
 from utils.exceptions import AppError
@@ -43,7 +43,7 @@ def add_user(dict_info: dict) -> dict:
 
         db.commit()
 
-        return user
+        return {"id": str(user["id"]), "email": user["email"]}
 
     except IntegrityError:
         db.rollback()

@@ -173,3 +173,6 @@ header or footer:
 
 - Faker : 
     - https://faker.readthedocs.io/en/master/locales/ar_AA.html#faker.providers.internet.ar_AA.Provider.user_name
+
+- vee validate
+    - https://www.shadcn-vue.com/docs/forms/vee-validate

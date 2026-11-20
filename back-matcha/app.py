@@ -39,7 +39,7 @@ app.config["SECRET_KEY"] = os.environ.get(
 
 CORS(
     app,
-    origins=["http://localhost:5174"],
+    origins=[FRONTEND_ORIGIN],
 )
 
 # ---------------------------------------------------------------------------

@@ -11,6 +11,7 @@ import InteractionHistory from '@/vues/InteractionHistory.vue'
 import LoginPage from '@/vues/auth/LoginPage.vue'
 import SocketTest from '@/components/SocketTest.vue';
 import SignupPage from '@/vues/auth/SignupPage.vue'
+import ProfilePage from '@/vues/auth/ProfilePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -82,6 +83,11 @@ const router = createRouter({
       path: '/signup',
       name: 'signup-page',
       component: SignupPage
+    },
+    {
+      path: '/profile',
+      name: 'Profile-page',
+      component: ProfilePage
     }
   ],
 })
